@@ -1,0 +1,205 @@
+<resources>
+    <string name="app_name">WeatherInvoltaCourse21API</string>
+    <string-array name="Cities">
+        <item>United Arab Emirates,Abu Dhabi</item>
+        <item>Nigeria,Abuja</item>
+        <item>Ghana,Accra</item>
+        <item>Ethiopia,Addis Ababa</item>
+        <item>Algeria,Algiers</item>
+        <item>Jordan,Amman</item>
+        <item>Netherlands,Amsterdam</item>
+        <item>Andorra,Andorra la Vella</item>
+        <item>Turkey,Ankara</item>
+        <item>Madagascar,Antananarivo</item>
+        <item>Samoa,Apia</item>
+        <item>Turkmenistan,Ashgabat</item>
+        <item>Eritrea,Asmare</item>
+        <item>Kazakhstan,Astana</item>
+        <item>Paraguay,Asuncion</item>
+        <item>Greece,Athens</item>
+        <item>Iraq,Baghdad</item>
+        <item>Azerbaijan,Baku</item>
+        <item>Mali,Bamako</item>
+        <item>Brunei,Bandar Seri Begawan</item>
+        <item>Thailand,Bangkok</item>
+        <item>Central African Republic,Bangui</item>
+        <item>Gambia,Banjul</item>
+        <item>Saint Kitts and Nevis,Basseterre</item>
+        <item>China,Beijing</item>
+        <item>Lebanon,Beirut</item>
+        <item>Serbia,Belgrade</item>
+        <item>Belize,Belmopan</item>
+        <item>Germany,Berlin</item>
+        <item>Switzerland,Bern</item>
+        <item>Kyrgyzstan,Bishkek</item>
+        <item>Guinea-Bissau,Bissau</item>
+        <item>Colombia,Bogota</item>
+        <item>Brazil,Brasilia</item>
+        <item>Slovakia,Bratislava</item>
+        <item>Congo Republic,Brazzaville</item>
+        <item>Barbados,Bridgetown</item>
+        <item>Belgium,Brussels</item>
+        <item>Romania,Bucharest</item>
+        <item>Hungary,Budapest</item>
+        <item>Argentina,Buenos Aires</item>
+        <item>Burundi,Bujumbura</item>
+        <item>Egypt,Cairo</item>
+        <item>Australia,Canberra</item>
+        <item>Venezuela,Caracas</item>
+        <item>Saint Lucia,Castries</item>
+        <item>Moldova,Chisinau</item>
+        <item>Sri Lanka,Colombo</item>
+        <item>Guinea,Conakry</item>
+        <item>Denmark,Copenhagen</item>
+        <item>Senegal,Dakar</item>
+        <item>Syria,Damascus</item>
+        <item>Bangladesh,Dhaka</item>
+        <item>East Timor,Dili</item>
+        <item>Djibouti,Djibouti</item>
+        <item>Tanzania,Dodoma</item>
+        <item>Qatar,Doha</item>
+        <item>Ireland,Dublin</item>
+        <item>Tajikistan,Dushanbe</item>
+        <item>Sierra Leone,Freetown</item>
+        <item>Tuvalu,Funafuti</item>
+        <item>Botswana,Gaborone</item>
+        <item>Guyana,Georgetown</item>
+        <item>Guatemala,Guatemala City</item>
+        <item>Vietnam,Hanoi</item>
+        <item>Zimbabwe,Harare</item>
+        <item>Cuba,Havana</item>
+        <item>Finland,Helsinki</item>
+        <item>Solomon Islands,Honiara</item>
+        <item>Pakistan,Islamabad</item>
+        <item>Indonesia,Jakarta</item>
+        <item>Israel,Jerusalem</item>
+        <item>Afghanistan,Kabul</item>
+        <item>Uganda,Kampala</item>
+        <item>Nepal,Kathmandu</item>
+        <item>Sudan,Khartoum</item>
+        <item>Ukraine,Kiev</item>
+        <item>Rwanda,Kigali</item>
+        <item>Jamaica,Kingston</item>
+        <item>Saint Vincent and the Grenadines,Kingstown</item>
+        <item>Congo Democratic Republic,Kinshasa</item>
+        <item>Malaysia,Kuala Lumpur</item>
+        <item>Kuwait,Kuwait City</item>
+        <item>Gabon,Libreville</item>
+        <item>Malawi,Lilongwe</item>
+        <item>Peru,Lima</item>
+        <item>Portugal,Lisbon</item>
+        <item>Slovenia,Ljubljana</item>
+        <item>United Kingdom,London</item>
+        <item>Angola,Luanda</item>
+        <item>Zambia,Lusaka</item>
+        <item>Luxembourg,Luxembourg</item>
+        <item>Spain,Madrid</item>
+        <item>Marshall Islands,Majuro</item>
+        <item>Equatorial Guinea,Malabo</item>
+        <item>Maldives,Male</item>
+        <item>Nicaragua,Managua</item>
+        <item>Bahrain,Manama</item>
+        <item>Philippines,Manila</item>
+        <item>Mozambique,Maputo</item>
+        <item>Lesotho,Maseru</item>
+        <item>Swaziland,Mbabane</item>
+        <item>Palau,Melekeok</item>
+        <item>Mexico,Mexico City</item>
+        <item>Belarus,Minsk</item>
+        <item>Somalia,Mogadishu</item>
+        <item>Monaco,Monaco</item>
+        <item>Liberia,Monrovia</item>
+        <item>Uruguay,Montevideo</item>
+        <item>Comoros,Moroni</item>
+        <item>Russia,Moscow</item>
+        <item>Oman,Muscat</item>
+        <item>Kenya,Nairobi</item>
+        <item>Bahamas,Nassau</item>
+        <item>Myanmar,Naypyidaw</item>
+        <item>Chad,Ndjamena</item>
+        <item>India,New Delhi</item>
+        <item>Niger,Niamey</item>
+        <item>Cyprus,Nicosia</item>
+        <item>Mauritania,Nouakchott</item>
+        <item>Tonga,Nukualofa</item>
+        <item>Norway,Oslo</item>
+        <item>Canada,Ottawa</item>
+        <item>Burkina Faso,Ouagadougou</item>
+        <item>Federated States of Micronesia,Palikir</item>
+        <item>Panama,Panama City</item>
+        <item>Suriname,Paramaribo</item>
+        <item>France,Paris</item>
+        <item>Cambodia,Phnom Penh</item>
+        <item>Montenegro,Podgorica</item>
+        <item>Mauritius,Port Louis</item>
+        <item>Papua New Guinea,Port Moresby</item>
+        <item>Trinidad and Tobago,Port of Spain</item>
+        <item>Vanuatu,Port Vila</item>
+        <item>Haiti,Port-au-Prince</item>
+        <item>Benin,Porto-Novo</item>
+        <item>Czech Republic,Prague</item>
+        <item>Cape Verde,Praia</item>
+        <item>South Africa,Pretoria</item>
+        <item>North Korea,Pyongyang</item>
+        <item>Ecuador,Quito</item>
+        <item>Morocco,Rabat</item>
+        <item>Iceland,Reykjavik</item>
+        <item>Latvia,Riga</item>
+        <item>Saudi Arabia,Riyadh</item>
+        <item>Italy,Rome</item>
+        <item>Dominica,Roseau</item>
+        <item>Costa Rica,San Jos?</item>
+        <item>San Marino,San Marino</item>
+        <item>El Salvador,San Salvador</item>
+        <item>Yemen,Sana?</item>
+        <item>Chile,Santiago</item>
+        <item>Dominican Republic,Santo Domingo</item>
+        <item>Bosnia and Herzegovina,Sarajevo</item>
+        <item>South Korea,Seoul</item>
+        <item>Singapore,Singapore</item>
+        <item>Macedonia,Skopje</item>
+        <item>Bulgaria,Sofia</item>
+        <item>Kiribati,South Tarawa</item>
+        <item>Grenada,St. Georges</item>
+        <item>Antigua and Barbuda,St. Johns</item>
+        <item>Sweden,Stockholm</item>
+        <item>Bolivia,Sucre</item>
+        <item>Fiji,Suva</item>
+        <item>Estonia,Tallinn</item>
+        <item>Uzbekistan,Tashkent</item>
+        <item>Georgia,Tbilisi</item>
+        <item>Honduras,Tegucigalpa</item>
+        <item>Iran,Tehran</item>
+        <item>Bhutan,Thimphu</item>
+        <item>Albania,Tirana</item>
+        <item>Japan,Tokyo</item>
+        <item>Libya,Tripoli</item>
+        <item>Tunisia,Tunis</item>
+        <item>Mongolia,Ulaanbaatar</item>
+        <item>Liechtenstein,Vaduz</item>
+        <item>Malta,Valletta</item>
+        <item>Vatican City,Vatican City</item>
+        <item>Seychelles,Victoria</item>
+        <item>Austria,Vienna</item>
+        <item>Laos,Vientiane</item>
+        <item>Lithuania,Vilnius</item>
+        <item>Poland,Warsaw</item>
+        <item>United States,Washington</item>
+        <item>New Zealand,Wellington</item>
+        <item>Namibia,Windhoek</item>
+        <item>Cote dIvoire,Yamoussoukro</item>
+        <item>Cameroon,Yaounde</item>
+        <item>Nauru,Yaren</item>
+        <item>Armenia,Yerevan</item>
+        <item>Croatia,Zagreb</item>
+    </string-array>
+    <string name="title_activity_main2">MainActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>
