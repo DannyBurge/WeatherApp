@@ -38,10 +38,6 @@ class CitiesRecyclerAdapter(
         return cities.size
     }
 
-    fun setItems(cities: List<City>) {
-
-    }
-
     class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
         private val cityView: TextView = view.findViewById(R.id.item_city)
         private val countryView: TextView = view.findViewById(R.id.item_country)

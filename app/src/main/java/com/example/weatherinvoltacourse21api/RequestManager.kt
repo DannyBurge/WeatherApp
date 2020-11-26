@@ -32,7 +32,7 @@ suspend fun makeRequest(urlString: String): String {
             buffer = BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
 
             val builder = StringBuilder()
-            var line: String? = null
+            var line: String?
 
             while (true) {
                 //читаем строку из буффера, если читать больше нечего прерываем цикл
