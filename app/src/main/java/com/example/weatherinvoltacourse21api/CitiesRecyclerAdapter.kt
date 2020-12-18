@@ -17,7 +17,6 @@ class CitiesRecyclerAdapter(
     RecyclerView.Adapter<CitiesRecyclerAdapter.ViewHolder>() {
     private val inflater = LayoutInflater.from(context)
 
-
     //Создаем элемент списка который отображается на экране
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = inflater.inflate(R.layout.city_list_item, parent, false)

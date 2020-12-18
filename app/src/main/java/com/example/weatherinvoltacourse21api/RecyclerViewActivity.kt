@@ -33,7 +33,7 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_recycler)
+        setContentView(R.layout.activity_citychange)
         setSupportActionBar(findViewById(R.id.listToolbar))
 
         initList()

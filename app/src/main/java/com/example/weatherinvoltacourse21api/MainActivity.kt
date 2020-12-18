@@ -5,31 +5,44 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.ViewPager
+import com.example.test_stuff.FragmentsPagerAdapter
+import com.example.weatherinvoltacourse21api.ui.onHourly.OnHourlyFragment
+import com.example.weatherinvoltacourse21api.ui.onWeather.OnWeatherFragment
+import com.example.weatherinvoltacourse21api.ui.onWeekly.OnWeeklyFragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.math.round
+import timber.log.Timber
+import java.lang.Math.round
+import kotlin.math.roundToInt
 
-class WeatherDetail : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
+
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_weather_detail)
+        setContentView(R.layout.activity_main)
 
         if (!isLocationPermissed()) {
             getLocalPermissions()
@@ -49,47 +62,75 @@ class WeatherDetail : AppCompatActivity() {
                 }
             }
         }
-        findViewById<TextView>(R.id.buttonLocationCity).setOnClickListener {
+        findViewById<FloatingActionButton>(R.id.buttonLocationCity).setOnClickListener {
             getLastKnownLocation()
         }
 
-        findViewById<Button>(R.id.tryAgainButton).setOnClickListener {
-            if (!isLocationPermissed()) {
-                getLocalPermissions()
-            } else getLastKnownLocation()
-        }
+//        findViewById<Button>(R.id.tryAgainButton).setOnClickListener {
+//            if (!isLocationPermissed()) {
+//                getLocalPermissions()
+//            } else getLastKnownLocation()
+//        }
 
-        findViewById<TextView>(R.id.buttonChangeCity).setOnClickListener {
+        findViewById<FloatingActionButton>(R.id.buttonLocationCity).setOnClickListener {
             val intent = Intent(this, RecyclerViewActivity::class.java)
             startActivityForResult(intent, 1)
         }
-    }
 
-    private var onBuckPressed = 0
-    override fun onBackPressed() {
-        onBuckPressed += 1
-        if (onBuckPressed > 1) {
-            super.onBackPressed()
-        } else Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show()
-    }
+        val navView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        val viewPager = findViewById<ViewPager>(R.id.view_pager)
 
-    @SuppressLint("MissingPermission")
-    override fun onResume() {
-        onBuckPressed = 0
-        super.onResume()
-    }
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_onWeatherFragment -> {
+                    viewPager.currentItem = 0
+                    true
+                }
+                R.id.navigation_onHourlyFragment -> {
+                    viewPager.currentItem = 1
+                    true
+                }
+                R.id.navigation_onWeeklyFragment -> {
+                    viewPager.currentItem = 2
+                    true
+                }
+                else -> false
+            }
+        }
 
-    override fun onPause() {
-        super.onPause()
-        locationProvider?.removeLocationUpdates(locationCallback)
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> navView.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
+                    1 -> navView.menu.findItem(R.id.navigation_onHourlyFragment).isChecked = true
+                    2 -> navView.menu.findItem(R.id.navigation_onWeeklyFragment).isChecked = true
+                }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+        })
+
+        val adapter = FragmentsPagerAdapter(supportFragmentManager)
+        adapter.addFragment(OnWeatherFragment())
+        adapter.addFragment(OnHourlyFragment())
+        adapter.addFragment(OnWeeklyFragment())
+        viewPager.adapter = adapter
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         onBuckPressed = 0
-        findViewById<LinearLayout>(R.id.layoutMain).visibility = View.GONE
+//        findViewById<fragment>(R.id.nav_host_fragment).visibility = View.GONE
         if (data == null) {
-            getLastKnownLocation()
+//            getLastKnownLocation()
             return
         } else {
             val cityOrLocation = data.getStringExtra("cityOrLocation")
@@ -102,6 +143,24 @@ class WeatherDetail : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private var onBuckPressed = 0
+    override fun onBackPressed() {
+        onBuckPressed += 1
+        if (onBuckPressed > 1) {
+            super.onBackPressed()
+        } else Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationProvider?.removeLocationUpdates(locationCallback)
+    }
+
+    override fun onResume() {
+        onBuckPressed = 0
+        super.onResume()
     }
 
     @SuppressLint("MissingPermission")
@@ -206,9 +265,9 @@ class WeatherDetail : AppCompatActivity() {
             val sunrise = JSONObject(jsonSys)["sunrise"].toString().toFloat().toLong()
             val sunset = JSONObject(jsonSys)["sunset"].toString().toFloat().toLong()
 
-            val temp = round(JSONObject(jsonMain)["temp"].toString().toFloat()).toInt()
-            val temp_min = round(JSONObject(jsonMain)["temp_min"].toString().toFloat()).toInt()
-            val temp_max = round(JSONObject(jsonMain)["temp_max"].toString().toFloat()).toInt()
+            val temp = JSONObject(jsonMain)["temp"].toString().toFloat().roundToInt()
+            val temp_min = JSONObject(jsonMain)["temp_min"].toString().toFloat().roundToInt()
+            val temp_max = JSONObject(jsonMain)["temp_max"].toString().toFloat().roundToInt()
             val wheatherInfo = jsonWheather["main"]
 
             val tempFeelsLike = round(
@@ -242,9 +301,9 @@ class WeatherDetail : AppCompatActivity() {
             findViewById<TextView>(R.id.visibilityInfo).text = "${visibility} km"
             findViewById<TextView>(R.id.pressureInfo).text = "${pressure} mm Hg"
 
-            findViewById<LinearLayout>(R.id.layoutMain).visibility = View.VISIBLE
+//            findViewById<LinearLayout>(R.id.layoutMain).visibility = View.VISIBLE
         } else {
-            findViewById<LinearLayout>(R.id.internetProblemLayout).visibility = View.VISIBLE
+//            findViewById<LinearLayout>(R.id.internetProblemLayout).visibility = View.VISIBLE
         }
     }
 }

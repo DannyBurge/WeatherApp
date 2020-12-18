@@ -2,4 +2,21 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph" />
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/onWeatherFragment">
+    <fragment
+        android:id="@+id/onWeatherFragment"
+        android:name="com.example.weatherinvoltacourse21api.ui.onWeather.OnWeatherFragment"
+        android:label="fragment_weather"
+        tools:layout="@layout/fragment_weather" />
+    <fragment
+        android:id="@+id/onHourlyFragment"
+        android:name="com.example.weatherinvoltacourse21api.ui.onHourly.OnHourlyFragment"
+        android:label="fragment_hourly"
+        tools:layout="@layout/fragment_hourly" />
+    <fragment
+        android:id="@+id/onWeeklyFragment"
+        android:name="com.example.weatherinvoltacourse21api.ui.onWeekly.OnWeeklyFragment"
+        android:label="fragment_weekly"
+        tools:layout="@layout/fragment_weekly" />
+</navigation>
