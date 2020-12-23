@@ -3,8 +3,10 @@ package com.example.weatherinvoltacourse21api
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
+import android.widget.Button
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -13,8 +15,10 @@ import com.google.android.gms.location.LocationServices
 
 
 class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.OnQueryTextListener {
-    var citiesArray: MutableList<City> = ArrayList()
+    private var citiesArray: MutableList<City> = ArrayList()
+    private var favouriteCitiesArray: MutableList<City> = ArrayList()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.cityselection_searchbar, menu)
@@ -36,24 +40,37 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
         setContentView(R.layout.activity_citychange)
         setSupportActionBar(findViewById(R.id.listToolbar))
 
+        prefs =
+            getSharedPreferences("savedCities", Context.MODE_PRIVATE)
+
         initList()
         initRecycler()
     }
 
     private fun initList() {
-        val cities = resources.getStringArray(R.array.Cities)
-        for (cityInfo in cities) {
-            val name = cityInfo.split(",")[1]
-            val country = cityInfo.split(",")[0]
-            citiesArray.add(City(name, country))
-        }
+            citiesArray.add(City("Moscow", "Russia",37.62f,55.75f))
+            citiesArray.add(City("Perm", "Russia",56.29f,58.02f))
+            citiesArray.add(City("Sacramento", "USA",-121.478851f,38.575764f))
+            citiesArray.add(City("Abu dhabi", "UAE",54.366669f,24.466667f))
+
+        favouriteCitiesArray.add(City("Auto", "locate", 0f,0f))
     }
 
     private fun initRecycler() {
         val recyclerView: RecyclerView = findViewById(R.id.recycler_view)
+        val recyclerFavsView: RecyclerView = findViewById(R.id.recycler_favourite_view)
         //устанавливаем наш адаптер в качестве адаптера для нашего RecyclerView,
         // попутно подавая в него обработчик событий клика
         recyclerView.adapter = CitiesRecyclerAdapter(this, citiesArray, this)
+        recyclerFavsView.adapter = CitiesRecyclerAdapter(this, favouriteCitiesArray, this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(prefs.contains("favouriteCities")){
+            // Получаем число из настроек
+//            favouriteCitiesArray.addAll(prefs.getStringSet("favouriteCities", favouriteCitiesArray))
+        }
     }
 
     private fun updateCityView(filter: String) {
@@ -63,13 +80,13 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
                 filter.toString(),
                 ignoreCase = true
             )
-        }
+        } as MutableList<City>
         recyclerView.adapter = CitiesRecyclerAdapter(this, filteredCities, this)
     }
 
     override fun onCellClickListener(data: City) {
         val intent = Intent()
-        intent.putExtra("cityOrLocation", "q=${data.city}")
+        intent.putExtra("Location", "lat=${data.latitude}&lon=${data.longitude}")
         setResult(RESULT_OK, intent)
         finish()
     }

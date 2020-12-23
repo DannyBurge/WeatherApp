@@ -5,5 +5,9 @@
     android:thicknessRatio="100"
     android:useLevel="true">
     <corners android:radius="10dp" />
-    <solid android:color="#0099FF" />
+    <gradient
+        android:centerColor="#003CA1"
+        android:startColor="#6BBAFF"
+        android:type="sweep" />
+    <!--    <solid android:color="#0099FF" />-->
 </shape>

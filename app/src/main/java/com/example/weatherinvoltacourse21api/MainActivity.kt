@@ -6,14 +6,11 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
 import com.example.test_stuff.FragmentsPagerAdapter
 import com.example.weatherinvoltacourse21api.ui.onHourly.OnHourlyFragment
@@ -23,15 +20,10 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
 import timber.log.Timber
-import java.lang.Math.round
-import kotlin.math.roundToInt
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,12 +31,34 @@ class MainActivity : AppCompatActivity() {
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
 
+
+    private val newRequest = MutableLiveData<Boolean>()
+    fun isNewRequest(): LiveData<Boolean> {
+        return newRequest
+    }
+    fun noNewRequest() {
+        newRequest.value = false
+    }
+
+    private val weatherCurrentInfoJSON = MutableLiveData<String>()
+    fun getCurrentInfo(): LiveData<String> {
+        return weatherCurrentInfoJSON
+    }
+
+    private val weatherHourlyInfoJSON = MutableLiveData<String>()
+    fun getHourlyInfo(): LiveData<String> {
+        return weatherHourlyInfoJSON
+    }
+
+    private val weatherWeeklyInfoJSON = MutableLiveData<String>()
+    fun getWeeklyInfo(): LiveData<String> {
+        return weatherWeeklyInfoJSON
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        if (!isLocationPermissed()) {
+        if (!isLocationGranted()) {
             getLocalPermissions()
         } else getLastKnownLocation()
 
@@ -53,7 +67,6 @@ class MainActivity : AppCompatActivity() {
                 if (locationRequest == null) {
                     return
                 }
-
                 val location = locationResult?.lastLocation
                 if (locationResult != null) {
                     for (loc in locationResult.locations) {
@@ -62,36 +75,32 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        findViewById<FloatingActionButton>(R.id.buttonLocationCity).setOnClickListener {
-            getLastKnownLocation()
-        }
 
-//        findViewById<Button>(R.id.tryAgainButton).setOnClickListener {
-//            if (!isLocationPermissed()) {
-//                getLocalPermissions()
-//            } else getLastKnownLocation()
-//        }
+        setContentView(R.layout.activity_main)
 
-        findViewById<FloatingActionButton>(R.id.buttonLocationCity).setOnClickListener {
+        val fab = findViewById<FloatingActionButton>(R.id.buttonLocationCity)
+
+        fab.setOnClickListener {
             val intent = Intent(this, RecyclerViewActivity::class.java)
             startActivityForResult(intent, 1)
         }
 
-        val navView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val viewPager = findViewById<ViewPager>(R.id.view_pager)
 
-        navView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_onWeatherFragment -> {
+        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+            when (item.title) {
+                "Weather" -> {
                     viewPager.currentItem = 0
                     true
                 }
-                R.id.navigation_onHourlyFragment -> {
+                "Hourly" -> {
                     viewPager.currentItem = 1
                     true
                 }
-                R.id.navigation_onWeeklyFragment -> {
+                "Weekly" -> {
                     viewPager.currentItem = 2
+//                    parse2ndJsonSetText(weatherOtherInfoJSON!!)
                     true
                 }
                 else -> false
@@ -108,9 +117,14 @@ class MainActivity : AppCompatActivity() {
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> navView.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
-                    1 -> navView.menu.findItem(R.id.navigation_onHourlyFragment).isChecked = true
-                    2 -> navView.menu.findItem(R.id.navigation_onWeeklyFragment).isChecked = true
+                    0 -> {
+                        bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked =
+                            true
+                    }
+                    1 -> bottomNavigation.menu.findItem(R.id.navigation_onHourlyFragment).isChecked =
+                        true
+                    2 -> bottomNavigation.menu.findItem(R.id.navigation_onWeeklyFragment).isChecked =
+                        true
                 }
             }
 
@@ -128,14 +142,16 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         onBuckPressed = 0
-//        findViewById<fragment>(R.id.nav_host_fragment).visibility = View.GONE
         if (data == null) {
-//            getLastKnownLocation()
             return
         } else {
-            val cityOrLocation = data.getStringExtra("cityOrLocation")
-            if (cityOrLocation != null) {
-                requestWeather("${cityOrLocation}")
+            val location = data.getStringExtra("Location")
+            if (location != null) {
+                if (location == "lat=0.0&lon=0.0") {
+                    getLastKnownLocation()
+                } else {
+                    requestWeather("$location")
+                }
             } else {
                 if (resultCode == 0) {
                     val intent = Intent(this, RecyclerViewActivity::class.java)
@@ -169,13 +185,14 @@ class MainActivity : AppCompatActivity() {
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
 
         locationProvider?.lastLocation?.addOnSuccessListener { location ->
+
             if (location != null) {
                 requestWeather("lat=${location.latitude}&lon=${location.longitude}")
             }
         }
 
         locationRequest = LocationRequest()
-        locationRequest?.interval = 10000
+        locationRequest?.interval = 60000
         locationRequest?.fastestInterval = 5000
         locationRequest?.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
@@ -195,7 +212,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getLocalPermissions() {
+    private fun getLocalPermissions() {
         ActivityCompat.requestPermissions(
             this, arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -226,7 +243,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isLocationPermissed(): Boolean {
+    private fun isLocationGranted(): Boolean {
         return ((ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -238,72 +255,36 @@ class MainActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED))
     }
 
-    private fun requestWeather(cityOrLocation: String) {
+    private fun requestWeather(location: String) {
+        newRequest.postValue(true)
         val keyAPI = "3b5683c272c1dfb381272ff1d030cad3"
         GlobalScope.launch {
-            val result =
+            weatherCurrentInfoJSON.postValue(
+//            weatherCurrentInfoJSON =
                 makeRequest(
-                    "https://api.openweathermap.org/data/2.5/weather?"
-                            + cityOrLocation +
+                    ("https://api.openweathermap.org/data/2.5/weather?"
+                            + location) +
                             "&units=metric&appid=${keyAPI}"
                 )
-            withContext(Dispatchers.Main) {
-                parseJsonSetText(result)
-            }
+            )
         }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun parseJsonSetText(result: String) {
-        if (!result.contains("Unable", ignoreCase = true)) {
-            val jsonResult = JSONObject(result)
-            val cityName = jsonResult["name"]
-
-            val jsonMain = jsonResult["main"].toString()
-            val jsonSys = jsonResult["sys"].toString()
-            val jsonWheather = (jsonResult["weather"] as JSONArray).getJSONObject(0)
-            val sunrise = JSONObject(jsonSys)["sunrise"].toString().toFloat().toLong()
-            val sunset = JSONObject(jsonSys)["sunset"].toString().toFloat().toLong()
-
-            val temp = JSONObject(jsonMain)["temp"].toString().toFloat().roundToInt()
-            val temp_min = JSONObject(jsonMain)["temp_min"].toString().toFloat().roundToInt()
-            val temp_max = JSONObject(jsonMain)["temp_max"].toString().toFloat().roundToInt()
-            val wheatherInfo = jsonWheather["main"]
-
-            val tempFeelsLike = round(
-                JSONObject(jsonResult["main"].toString())["feels_like"].toString().toFloat()
-            ).toInt()
-
-            val windInfo = jsonResult["wind"].toString()
-            val windSpeed = JSONObject(windInfo)["speed"]
-
-            val visibility = (jsonResult["visibility"].toString().toFloat() / 1000).toInt()
-            val humidity = JSONObject(jsonMain)["humidity"]
-            val pressure = (JSONObject(jsonMain)["pressure"].toString().toFloat() * 0.75).toInt()
-
-            val sdf = java.text.SimpleDateFormat("HH:mm")
-            val sunriseTime = java.util.Date(sunrise * 1000)
-            val sunsetTime = java.util.Date(sunset * 1000)
-
-            findViewById<TextView>(R.id.cityName).text = "$cityName"
-            findViewById<TextView>(R.id.tempMain).text = "${temp}°C"
-            findViewById<TextView>(R.id.tempMax).text = "Max temperature: ${temp_max}°C"
-            findViewById<TextView>(R.id.tempMin).text = "Min temperature: ${temp_min}°C"
-            findViewById<TextView>(R.id.tempFeelsLike).text = "Feels Like: ${tempFeelsLike}°C"
-
-            findViewById<TextView>(R.id.mainWeather).text = "${wheatherInfo}"
-            findViewById<TextView>(R.id.sunRise).text = "Sunrise at " + sdf.format(sunriseTime)
-            findViewById<TextView>(R.id.sunSet).text = "Sunset at " + sdf.format(sunsetTime)
-
-
-            findViewById<TextView>(R.id.windInfo).text = "${windSpeed} m/s"
-            findViewById<TextView>(R.id.humidityInfo).text = "${humidity} %"
-            findViewById<TextView>(R.id.visibilityInfo).text = "${visibility} km"
-            findViewById<TextView>(R.id.pressureInfo).text = "${pressure} mm Hg"
-
-//            findViewById<LinearLayout>(R.id.layoutMain).visibility = View.VISIBLE
-        } else {
-//            findViewById<LinearLayout>(R.id.internetProblemLayout).visibility = View.VISIBLE
+        GlobalScope.launch {
+            weatherHourlyInfoJSON.postValue(
+                makeRequest(
+                    "https://api.openweathermap.org/data/2.5/onecall?"
+                            + location +
+                            "&exclude=current,minutely,daily,alerts&units=metric&appid=${keyAPI}"
+                )
+            )
+        }
+        GlobalScope.launch {
+            weatherWeeklyInfoJSON.postValue(
+                makeRequest(
+                    "https://api.openweathermap.org/data/2.5/onecall?"
+                            + location +
+                            "&exclude=current,minutely,hourly,alerts&units=metric&appid=${keyAPI}"
+                )
+            )
         }
     }
 }

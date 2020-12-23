@@ -12,13 +12,11 @@ import javax.net.ssl.HttpsURLConnection
 //Ключевое слово здесь - suspend. Это даст Котлину понять, что это suspend функция и она будет приостанавливать корутину.
 suspend fun makeRequest(urlString: String): String {
     //выполняем необходимую работу в фоновом потоке
-    return withContext(Dispatchers.IO) {
+    return GlobalScope.async {
         var buffer: BufferedReader? = null
         try {
             //создаем экземпляр класса URL, передаем в него наш адрес
             val url = URL(urlString.replace(" ", "%20"))
-
-//            val url = URL("https://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=96130c474a1cba9f126dba69955d342e")
             //создаем экземпляр класса HttpsURLConnection
             val httpsURLConnection = url.openConnection() as HttpsURLConnection
             //указываем какой HTTP метод мы будем использовать
@@ -50,5 +48,5 @@ suspend fun makeRequest(urlString: String): String {
             //обязательно выгружаем буффер из памяти
             buffer?.close()
         }
-    }
+    }.await()
 }
