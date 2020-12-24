@@ -50,6 +50,11 @@ class OnWeatherFragment : Fragment() {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        doAnimation = false
+    }
+
     @SuppressLint("SetTextI18n")
     fun parseJsonSetText(result: String) {
         if (!result.contains("Unable", ignoreCase = true)) {

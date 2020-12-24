@@ -89,16 +89,16 @@ class MainActivity : AppCompatActivity() {
         val viewPager = findViewById<ViewPager>(R.id.view_pager)
 
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
-            when (item.title) {
-                "Weather" -> {
+            when (item.itemId) {
+                R.id.navigation_onWeatherFragment -> {
                     viewPager.currentItem = 0
                     true
                 }
-                "Hourly" -> {
+                R.id.navigation_onHourlyFragment -> {
                     viewPager.currentItem = 1
                     true
                 }
-                "Weekly" -> {
+                R.id.navigation_onWeeklyFragment -> {
                     viewPager.currentItem = 2
 //                    parse2ndJsonSetText(weatherOtherInfoJSON!!)
                     true

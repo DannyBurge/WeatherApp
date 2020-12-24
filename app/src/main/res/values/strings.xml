@@ -2,8 +2,7 @@
     <string name="app_name">WeatherApp</string>
     <string name="title_weatherNow">Weather</string>
     <string name="title_weatherHourly">Hourly</string>
-    <string name="title_weatherWeekly">Weekly</string>
-    <string name="title_changeCity">City</string>
+    <string name="title_weatherWeekly">Daily</string>
     <string-array name="Cities">
         <item>United Arab Emirates,Abu Dhabi</item>
         <item>Nigeria,Abuja</item>
