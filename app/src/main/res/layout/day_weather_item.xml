@@ -1,92 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/myCardStyle.Revert"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp">
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/cardview"
-        android:padding="16dp"
-        app:layout_constraintStart_toStartOf="@+id/timeHourly"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weatherInfoTempDay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0°C"
-            android:textSize="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weatherInfoTempNight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="0°C"
-            android:textSize="24dp"
-            app:layout_constraintStart_toEndOf="@+id/weatherInfoTempDay"
-            app:layout_constraintTop_toTopOf="@+id/weatherInfoTempDay" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weatherInfoDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Clear"
-            android:textSize="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherInfoTempNight" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weatherInfoPressure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1024"
-            android:textSize="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherInfoDescription" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weatherInfoHumidity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="97"
-            android:textSize="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherInfoPressure" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-
-            android:id="@+id/weatherInfoWindSpeed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2.6"
-            android:textSize="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherInfoHumidity" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/weatherInfoDate"
+        android:id="@+id/dateDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Today"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
+        android:text="25"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/dateMonth"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="."
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/dateMonth"
+        app:layout_constraintStart_toEndOf="@+id/dateDay"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dateMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/dayWeatherInfoIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="4dp"
+        android:src="@mipmap/cloud"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.02" />
+        app:tint="#878787" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/mainTempDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-20°C"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView3"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Day:"
+        app:layout_constraintBottom_toTopOf="@+id/mainTempDay"
+        app:layout_constraintEnd_toEndOf="@+id/mainTempDay"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Night:"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
+        app:layout_constraintEnd_toEndOf="@+id/mainTempNight" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/mainTempNight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-10°C"
+        android:textSize="32sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/mainTempDay"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dayWeatherInfoDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scattered clouds"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toBottomOf="@+id/dayWeatherInfoIcon" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="50dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="149dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

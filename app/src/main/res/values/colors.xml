@@ -9,4 +9,22 @@
     <color name="white">#FFFFFFFF</color>
     <color name="clear">#00FFFFFF</color>
     <color name="semi_clear">#1A000000</color>
+
+    <color name="crane_purple_800">#5C1349</color>
+    <color name="crane_purple_900">#4E0D3A</color>
+    <color name="crane_purple_700">#71135C</color>
+    <color name="crane_red_400">#F1135C</color>
+
+    <color name="my_color_pink">#F54F8C</color>
+    <color name="my_color_orange">#F5775B</color>
+    <color name="my_color_yellow">#BDF567</color>
+    <color name="my_color_green">#36F5B0</color>
+    <color name="my_color_purple">#D142F5</color>
+
+    <color name="my_gray">#EFEFEF</color>
+
+
+
+
+
 </resources>

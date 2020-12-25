@@ -3,6 +3,7 @@
     <string name="title_weatherNow">Weather</string>
     <string name="title_weatherHourly">Hourly</string>
     <string name="title_weatherWeekly">Daily</string>
+    <string name="city_name">City name</string>
     <string-array name="Cities">
         <item>United Arab Emirates,Abu Dhabi</item>
         <item>Nigeria,Abuja</item>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -15,7 +16,6 @@ import com.example.weatherinvoltacourse21api.R
 import com.example.weatherinvoltacourse21api.databinding.FragmentWeatherBinding
 import org.json.JSONArray
 import org.json.JSONObject
-import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -96,28 +96,60 @@ class OnWeatherFragment : Fragment() {
             binding.tempFeelsLike.text = "Feels Like: ${tempFeelsLike}°C"
 
             binding.mainWeather.text = "${weatherInfo}"
-            binding.sunRise.text = "Sunrise at " + sdf.format(sunriseTime)
-            binding.sunSet.text = "Sunset at " + sdf.format(sunsetTime)
+            binding.sunRise.text = sdf.format(sunriseTime)
+            binding.sunSet.text = sdf.format(sunsetTime)
             binding.windInfo.text = "${windSpeed} m/s"
             binding.humidityInfo.text = "${humidity} %"
             binding.visibilityInfo.text = "${visibility} km"
             binding.pressureInfo.text = "${pressure} mm Hg"
 
+            val barMain: ProgressBar
+            val barFeelsLike: ProgressBar
+
+            if (temp < 0) {
+                barMain = binding.tempCold
+                barFeelsLike = binding.tempColdFeelsLikeBar
+                binding.tempHot.visibility = View.INVISIBLE
+                binding.tempFeelsLikeBar.visibility = View.INVISIBLE
+                binding.tempCold.visibility = View.VISIBLE
+                binding.tempColdFeelsLikeBar.visibility = View.VISIBLE
+            } else {
+                barMain = binding.tempHot
+                barFeelsLike = binding.tempFeelsLikeBar
+                binding.tempHot.visibility = View.VISIBLE
+                binding.tempFeelsLikeBar.visibility = View.VISIBLE
+                binding.tempCold.visibility = View.INVISIBLE
+                binding.tempColdFeelsLikeBar.visibility = View.INVISIBLE
+            }
+
             if (doAnimation) {
-                val animation = ObjectAnimator.ofInt(
-                    binding.tempHot,
+                //Первая шкала "Температура"
+                var animation = ObjectAnimator.ofInt(
+                    barMain,
                     "progress",
                     0,
-                    abs(temp)*10
+                    abs(temp) * 100
                 ) // see this max value coming back here, we animate towards that value
-
                 animation.duration = 1500 // in milliseconds
+                animation.interpolator = DecelerateInterpolator()
+                animation.start()
 
+                //Вторая шкала "Температура по ощущениям"
+                animation = ObjectAnimator.ofInt(
+                    barFeelsLike,
+                    "progress",
+                    0,
+                    abs(tempFeelsLike) * 100
+                )
+                animation.duration = 2000 // in milliseconds
                 animation.interpolator = DecelerateInterpolator()
                 animation.start()
 
                 mainActivity?.noNewRequest()
-            } else binding.tempHot.progress = abs(temp)*10
+            } else {
+                barMain.progress = abs(temp) * 100
+                barFeelsLike.progress = abs(tempFeelsLike) * 100
+            }
         } else {
 //            findViewById<LinearLayout>(R.id.internetProblemLayout).visibility = View.VISIBLE
         }

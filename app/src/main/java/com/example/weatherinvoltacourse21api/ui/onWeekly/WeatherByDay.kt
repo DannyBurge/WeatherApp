@@ -1,10 +1,14 @@
 package com.example.weatherinvoltacourse21api.ui.onWeekly
 
+import java.io.FileDescriptor
+
 data class WeatherByDay(
-    val time: String,
+    val day: String,
+    val month: String,
     val dayTemp: String,
     val nightTemp: String,
-    val weatherMain: String,
+    val idWeather: String,
+    val weatherDescription: String,
 
     val pressure: String,
     val humidity: String,

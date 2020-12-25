@@ -50,8 +50,10 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
     private fun initList() {
             citiesArray.add(City("Moscow", "Russia",37.62f,55.75f))
             citiesArray.add(City("Perm", "Russia",56.29f,58.02f))
-            citiesArray.add(City("Sacramento", "USA",-121.478851f,38.575764f))
-            citiesArray.add(City("Abu dhabi", "UAE",54.366669f,24.466667f))
+            citiesArray.add(City("Vorkuta", "Russia",64.06f,67.50f))
+            citiesArray.add(City("Sacramento", "USA",-121.48f,38.58f))
+            citiesArray.add(City("Abu dhabi", "UAE",54.37f,24.47f))
+            citiesArray.add(City("Perth", "Australia",115.86f,-31.95f))
 
         favouriteCitiesArray.add(City("Auto", "locate", 0f,0f))
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherinvoltacourse21api.R
@@ -32,22 +33,35 @@ class WeatherByDayListAdapter(
     }
 
     class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
-        private val time: TextView = view.findViewById(R.id.weatherInfoDate)
-        private val dayTemp: TextView = view.findViewById(R.id.weatherInfoTempDay)
-        private val nightTemp: TextView = view.findViewById(R.id.weatherInfoTempNight)
-        private val weatherMain: TextView = view.findViewById(R.id.weatherInfoDescription)
-        private val pressure: TextView = view.findViewById(R.id.weatherInfoPressure)
-        private val humidity: TextView = view.findViewById(R.id.weatherInfoHumidity)
-        private val windSpeed: TextView = view.findViewById(R.id.weatherInfoWindSpeed)
+        private val dateDay: TextView = view.findViewById(R.id.dateDay)
+        private val dateMonth: TextView = view.findViewById(R.id.dateMonth)
+        private val dayTemp: TextView = view.findViewById(R.id.mainTempDay)
+        private val nightTemp: TextView = view.findViewById(R.id.mainTempNight)
+        private val weatherMain: TextView = view.findViewById(R.id.dayWeatherInfoDescription)
+        private val icon: ImageView = view.findViewById(R.id.dayWeatherInfoIcon)
 
-        fun bind(weatherInfoByHour: WeatherByDay) {
-            time.text = weatherInfoByHour.time
-            dayTemp.text = weatherInfoByHour.dayTemp
-            nightTemp.text = weatherInfoByHour.nightTemp
-            weatherMain.text = weatherInfoByHour.weatherMain
-            pressure.text = weatherInfoByHour.pressure
-            humidity.text = weatherInfoByHour.humidity
-            windSpeed.text = weatherInfoByHour.wind_speed
+        fun bind(weatherInfoByDay: WeatherByDay) {
+            dateDay.text = weatherInfoByDay.day
+            dateMonth.text = weatherInfoByDay.month
+            dayTemp.text = weatherInfoByDay.dayTemp
+            nightTemp.text = weatherInfoByDay.nightTemp
+            weatherMain.text = weatherInfoByDay.weatherDescription
+
+            when(weatherInfoByDay.idWeather[0]) {
+                '2' -> icon.setImageResource(R.mipmap.storm)
+                '3' -> icon.setImageResource(R.mipmap.wet)
+                '5' -> icon.setImageResource(R.mipmap.rain)
+                '6' -> icon.setImageResource(R.mipmap.snow)
+                '7' -> icon.setImageResource(R.mipmap.dry)
+                '8' -> when(weatherInfoByDay.idWeather[2]) {
+                    '0' -> icon.setImageResource(R.mipmap.sun)
+                    '1' -> icon.setImageResource(R.mipmap.sun_cloud)
+                    '2' -> icon.setImageResource(R.mipmap.cloud)
+                    '3' -> icon.setImageResource(R.mipmap.clouds)
+                    '4' -> icon.setImageResource(R.mipmap.clouds)
+                }
+
+            }
         }
     }
 }

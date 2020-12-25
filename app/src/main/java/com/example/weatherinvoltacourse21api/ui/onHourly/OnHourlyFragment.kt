@@ -1,23 +1,20 @@
 package com.example.weatherinvoltacourse21api.ui.onHourly
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
-import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherinvoltacourse21api.CitiesRecyclerAdapter
 import com.example.weatherinvoltacourse21api.MainActivity
 import com.example.weatherinvoltacourse21api.R
 import com.example.weatherinvoltacourse21api.databinding.FragmentHourlyBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 class OnHourlyFragment : Fragment() {
@@ -55,20 +52,33 @@ class OnHourlyFragment : Fragment() {
             val jsonResult = JSONObject(result)
             val jsonHourlyWeather = (jsonResult["hourly"] as JSONArray)
             var hourlyData: JSONObject
-            val sdf = java.text.SimpleDateFormat("HH:mm")
-            for (hourCounter in 0 until jsonHourlyWeather.length()) {
+            val sdf = java.text.SimpleDateFormat("H")
+            for (hourCounter in 0..12) {
                 hourlyData = jsonHourlyWeather.getJSONObject(hourCounter)
-                val dt = java.util.Date(hourlyData["dt"].toString().toFloat().toLong() * 1000)
+                val dt = Date((hourlyData["dt"].toString().toFloat() * 1000).toLong())
 
                 val tempMain = hourlyData["temp"].toString().toFloat().roundToInt()
-                val weatherInfo = (JSONObject(
+                val feelsLikeMain = hourlyData["feels_like"].toString().toFloat().roundToInt()
+                val weatherId = (JSONObject(
                     (hourlyData["weather"] as JSONArray).getJSONObject(0).toString()
-                )["description"]).toString().capitalize()
+                )["id"]).toString()
+                val weatherDescription = (JSONObject(
+                    (hourlyData["weather"] as JSONArray).getJSONObject(0).toString()
+                )["description"]).toString().capitalize(Locale.ROOT)
 
-                weatherInfoByHour.add(WeatherByHour(sdf.format(dt), "$tempMain°C", weatherInfo))
+                weatherInfoByHour.add(WeatherByHour(sdf.format(toNearestHour(dt)), "$tempMain°C", "$feelsLikeMain°C", weatherId, weatherDescription))
             }
             binding.hourlyWeatherList.adapter =
                 WeatherByHourListAdapter(binding.hourlyWeatherContainer.context, weatherInfoByHour)
         }
+    }
+
+    private fun toNearestHour(date: Date): Date {
+        val calendar: Calendar = GregorianCalendar()
+        calendar.time = date
+        if (calendar.get(Calendar.MINUTE) >= 30) calendar.add(Calendar.HOUR, 1)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        return calendar.time
     }
 }

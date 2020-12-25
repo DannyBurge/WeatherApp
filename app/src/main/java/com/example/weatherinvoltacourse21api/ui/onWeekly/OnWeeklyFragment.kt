@@ -45,7 +45,8 @@ class OnWeeklyFragment : Fragment() {
             val jsonResult = JSONObject(result)
             val jsonDailyWeather = (jsonResult["daily"] as JSONArray)
             var dailyData: JSONObject
-            val sdf = java.text.SimpleDateFormat("dd.MM")
+            val sdfDay = java.text.SimpleDateFormat("dd")
+            val sdfMonth = java.text.SimpleDateFormat("MM")
             for (dayCounter in 0 until jsonDailyWeather.length()) {
                 dailyData = jsonDailyWeather.getJSONObject(dayCounter)
                 val dt = java.util.Date(dailyData["dt"].toString().toFloat().toLong() * 1000)
@@ -58,17 +59,21 @@ class OnWeeklyFragment : Fragment() {
                 val humidity = dailyData["humidity"].toString().toFloat().roundToInt().toString()
                 val windSpeed = dailyData["wind_speed"].toString().toFloat().toString()
 
-                val weatherMain = (JSONObject(
+                val weatherId = (JSONObject(
+                    (dailyData["weather"] as JSONArray).getJSONObject(0).toString()
+                )["id"]).toString()
+                val weatherDescription = (JSONObject(
                     (dailyData["weather"] as JSONArray).getJSONObject(0).toString()
                 )["description"]).toString().capitalize()
 
                 weatherInfoByDay.add(
                     WeatherByDay(
-                        sdf.format(dt),
-                        dayTemp,
-                        nightTemp,
-                        weatherMain,
-
+                        sdfDay.format(dt),
+                        sdfMonth.format(dt),
+                        "$dayTemp°C",
+                        "$nightTemp°C",
+                        weatherId,
+                        weatherDescription,
                         pressure,
                         humidity,
                         windSpeed

@@ -67,12 +67,6 @@ class MainActivity : AppCompatActivity() {
                 if (locationRequest == null) {
                     return
                 }
-                val location = locationResult?.lastLocation
-                if (locationResult != null) {
-                    for (loc in locationResult.locations) {
-                        requestWeather("lat=${location?.latitude}&lon=${location?.longitude}")
-                    }
-                }
             }
         }
 
@@ -90,11 +84,11 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_onWeatherFragment -> {
+                R.id.navigation_onHourlyFragment -> {
                     viewPager.currentItem = 0
                     true
                 }
-                R.id.navigation_onHourlyFragment -> {
+                R.id.navigation_onWeatherFragment -> {
                     viewPager.currentItem = 1
                     true
                 }
@@ -117,12 +111,12 @@ class MainActivity : AppCompatActivity() {
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> {
+                    0 -> bottomNavigation.menu.findItem(R.id.navigation_onHourlyFragment).isChecked =
+                        true
+                    1 -> {
                         bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked =
                             true
                     }
-                    1 -> bottomNavigation.menu.findItem(R.id.navigation_onHourlyFragment).isChecked =
-                        true
                     2 -> bottomNavigation.menu.findItem(R.id.navigation_onWeeklyFragment).isChecked =
                         true
                 }
@@ -133,10 +127,13 @@ class MainActivity : AppCompatActivity() {
         })
 
         val adapter = FragmentsPagerAdapter(supportFragmentManager)
-        adapter.addFragment(OnWeatherFragment())
         adapter.addFragment(OnHourlyFragment())
+        adapter.addFragment(OnWeatherFragment())
         adapter.addFragment(OnWeeklyFragment())
         viewPager.adapter = adapter
+
+        viewPager.currentItem = 1
+        bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -256,6 +253,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestWeather(location: String) {
+        Timber.i("requestWeather")
         newRequest.postValue(true)
         val keyAPI = "3b5683c272c1dfb381272ff1d030cad3"
         GlobalScope.launch {

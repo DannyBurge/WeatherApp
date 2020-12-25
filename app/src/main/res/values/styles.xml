@@ -10,11 +10,33 @@
     </style>
 
     <style name="myCardStyle">
-        <item name="android:elevation">8dp</item>
-        <item name="android:background">@drawable/cardview</item>
-        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:background">@drawable/main_bg</item>
+        <item name="android:paddingHorizontal">4dp</item>
         <item name="android:paddingBottom">16dp</item>
         <item name="android:layout_marginVertical">4dp</item>
         <item name="android:layout_marginHorizontal">16dp</item>
+    </style>
+
+    <style name="myCardStyle.Revert">
+        <item name="android:background">@drawable/main_bg_180</item>
+    </style>
+
+    <style name="myCircularBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:max">6000</item>
+        <item name="android:min">0</item>
+        <item name="android:progress">3000</item>
+        <item name="android:background">@drawable/progress_bar_bg</item>
+        <item name="android:rotation">90</item>
+    </style>
+
+    <style name="ProgressBarBGColor">
+        <item name="android:color">#FBFBFB</item>
+    </style>
+
+    <style name="myCircularBar.Inner">
+        <item name="android:background">@drawable/progress_bar_bg_inner</item>
     </style>
 </resources>
