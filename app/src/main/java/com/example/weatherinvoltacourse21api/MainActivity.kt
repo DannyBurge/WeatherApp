@@ -2,6 +2,7 @@ package com.example.weatherinvoltacourse21api
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
@@ -55,12 +56,29 @@ class MainActivity : AppCompatActivity() {
         return weatherWeeklyInfoJSON
     }
 
+    fun checkIfThereIsFavouriteCity() {
+        val prefs = getSharedPreferences("savedCities", Context.MODE_PRIVATE)
+        val savedCities =
+            prefs.getString("savedCities", "Auto,locate,${0f},${0f},true")
+        if (savedCities != null) {
+            for (savedCity in savedCities.split(";")) {
+                val cityInfo = savedCity.split(",")
+                if (cityInfo[4].toBoolean()) {
+                    if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
+                        getLastKnownLocation()
+                    } else requestWeather("lat=${cityInfo[3]}&lon=${cityInfo[2]}")
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
+
         if (!isLocationGranted()) {
             getLocalPermissions()
-        } else getLastKnownLocation()
+        } else checkIfThereIsFavouriteCity()
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {

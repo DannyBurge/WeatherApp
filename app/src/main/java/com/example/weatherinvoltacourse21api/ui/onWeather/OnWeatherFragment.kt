@@ -20,7 +20,7 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 
 
-class OnWeatherFragment : Fragment() {
+class OnWeatherFragment : Fragment(){
 
     var mainActivity: MainActivity? = null
     private lateinit var binding: FragmentWeatherBinding
@@ -128,7 +128,7 @@ class OnWeatherFragment : Fragment() {
                     barMain,
                     "progress",
                     0,
-                    abs(temp) * 100
+                    abs(temp) * 100,
                 ) // see this max value coming back here, we animate towards that value
                 animation.duration = 1500 // in milliseconds
                 animation.interpolator = DecelerateInterpolator()

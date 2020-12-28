@@ -39,11 +39,6 @@ class OnHourlyFragment : Fragment() {
             binding.root.visibility = View.VISIBLE
             parseJsonSetText(it)
         })
-
-//        val isNewRequest: LiveData<Boolean>? = mainActivity?.isNewRequest()
-//        isNewRequest?.observe(viewLifecycleOwner, {
-//            doAnimation = it
-//        })
     }
 
     private fun parseJsonSetText(result: String) {

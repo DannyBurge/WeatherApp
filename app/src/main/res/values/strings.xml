@@ -4,6 +4,7 @@
     <string name="title_weatherHourly">Hourly</string>
     <string name="title_weatherWeekly">Daily</string>
     <string name="city_name">City name</string>
+    <string name="addInFavourite">Add to favourite cities</string>
     <string-array name="Cities">
         <item>United Arab Emirates,Abu Dhabi</item>
         <item>Nigeria,Abuja</item>
