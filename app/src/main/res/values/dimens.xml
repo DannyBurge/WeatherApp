@@ -1,6 +1,7 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="innerRadiusRatioOuter">2.2</dimen>
-    <dimen name="innerRadiusRatioInner">2.26</dimen>
+    <dimen name="innerRadiusRatioInner">2.3</dimen>
+    <dimen name="thickRation">60</dimen>
 
 </resources>
