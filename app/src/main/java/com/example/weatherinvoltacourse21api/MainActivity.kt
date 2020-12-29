@@ -75,6 +75,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
+<<<<<<< Updated upstream
+=======
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.containerSecond.visibility = View.INVISIBLE
+        binding.viewPager.visibility = View.INVISIBLE
+>>>>>>> Stashed changes
 
         if (!isLocationGranted()) {
             getLocalPermissions()
@@ -301,6 +307,32 @@ class MainActivity : AppCompatActivity() {
                             "&exclude=current,minutely,hourly,alerts&units=metric&appid=${keyAPI}"
                 )
             )
+<<<<<<< Updated upstream
+=======
+            isLoading[2] = false
+        }
+        GlobalScope.launch {
+            while (true) {
+                if (!isLoading[0] and !isLoading[1] and !isLoading[2]) {
+                    break
+                }
+                delay(300)
+            }
+            withContext(Dispatchers.Main) {
+                binding.loadingProgressBar.hide()
+                if (!(weatherCurrentInfoJSON.value + weatherHourlyInfoJSON.value + weatherWeeklyInfoJSON.value).contains(
+                        Regex("timeout|Unable")
+                    )
+                ) {
+                    binding.viewPager.visibility = View.VISIBLE
+                    binding.buttonLocationCity.visibility = View.VISIBLE
+                    binding.containerSecond.visibility = View.GONE
+                } else {
+                    binding.viewPager.visibility = View.INVISIBLE
+                    binding.containerSecond.visibility = View.VISIBLE
+                }
+            }
+>>>>>>> Stashed changes
         }
     }
 }
