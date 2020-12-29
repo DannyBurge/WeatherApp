@@ -82,6 +82,9 @@ class FavouriteCitiesRecyclerAdapter(
                         "City ${city.city} removed from favourites",
                         Toast.LENGTH_SHORT
                     ).show()
+                    if (city.isFavourite) {
+                        favouriteCities!!.value!![0].isFavourite = true
+                    }
                     favouriteCities!!.value!!.remove(city)
                     this@FavouriteCitiesRecyclerAdapter.notifyDataSetChanged()
                 }
