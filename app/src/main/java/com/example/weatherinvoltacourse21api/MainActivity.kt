@@ -7,36 +7,37 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
 import com.example.test_stuff.FragmentsPagerAdapter
+import com.example.weatherinvoltacourse21api.databinding.ActivityMainBinding
 import com.example.weatherinvoltacourse21api.ui.onHourly.OnHourlyFragment
 import com.example.weatherinvoltacourse21api.ui.onWeather.OnWeatherFragment
 import com.example.weatherinvoltacourse21api.ui.onWeekly.OnWeeklyFragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
-
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
 
+    lateinit var binding: ActivityMainBinding
 
     private val newRequest = MutableLiveData<Boolean>()
     fun isNewRequest(): LiveData<Boolean> {
         return newRequest
     }
+
     fun noNewRequest() {
         newRequest.value = false
     }
@@ -56,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         return weatherWeeklyInfoJSON
     }
 
-    fun checkIfThereIsFavouriteCity() {
+    private fun checkIfThereIsFavouriteCity() {
         val prefs = getSharedPreferences("savedCities", Context.MODE_PRIVATE)
         val savedCities =
             prefs.getString("savedCities", "Auto,locate,${0f},${0f},true")
@@ -75,12 +76,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
-<<<<<<< Updated upstream
-=======
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.containerSecond.visibility = View.INVISIBLE
         binding.viewPager.visibility = View.INVISIBLE
->>>>>>> Stashed changes
 
         if (!isLocationGranted()) {
             getLocalPermissions()
@@ -94,30 +92,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        setContentView(R.layout.activity_main)
+        binding.tryAgainButton.setOnClickListener {
+            if (!isLocationGranted()) {
+                getLocalPermissions()
+            } else checkIfThereIsFavouriteCity()
+        }
 
-        val fab = findViewById<FloatingActionButton>(R.id.buttonLocationCity)
-
-        fab.setOnClickListener {
+        binding.buttonLocationCity.setOnClickListener {
             val intent = Intent(this, RecyclerViewActivity::class.java)
             startActivityForResult(intent, 1)
         }
 
-        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        val viewPager = findViewById<ViewPager>(R.id.view_pager)
-
-        bottomNavigation.setOnNavigationItemSelectedListener { item ->
+        binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_onHourlyFragment -> {
-                    viewPager.currentItem = 0
+                    binding.viewPager.currentItem = 0
                     true
                 }
                 R.id.navigation_onWeatherFragment -> {
-                    viewPager.currentItem = 1
+                    binding.viewPager.currentItem = 1
                     true
                 }
                 R.id.navigation_onWeeklyFragment -> {
-                    viewPager.currentItem = 2
+                    binding.viewPager.currentItem = 2
 //                    parse2ndJsonSetText(weatherOtherInfoJSON!!)
                     true
                 }
@@ -125,7 +122,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -135,13 +132,13 @@ class MainActivity : AppCompatActivity() {
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> bottomNavigation.menu.findItem(R.id.navigation_onHourlyFragment).isChecked =
+                    0 -> binding.bottomNavigation.menu.findItem(R.id.navigation_onHourlyFragment).isChecked =
                         true
                     1 -> {
-                        bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked =
+                        binding.bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked =
                             true
                     }
-                    2 -> bottomNavigation.menu.findItem(R.id.navigation_onWeeklyFragment).isChecked =
+                    2 -> binding.bottomNavigation.menu.findItem(R.id.navigation_onWeeklyFragment).isChecked =
                         true
                 }
             }
@@ -154,10 +151,10 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(OnHourlyFragment())
         adapter.addFragment(OnWeatherFragment())
         adapter.addFragment(OnWeeklyFragment())
-        viewPager.adapter = adapter
+        binding.viewPager.adapter = adapter
 
-        viewPager.currentItem = 1
-        bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
+        binding.viewPager.currentItem = 1
+        binding.bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -277,18 +274,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestWeather(location: String) {
-        Timber.i("requestWeather")
+        val isLoading = arrayOf(true, true, true)
+        binding.loadingProgressBar.show()
+        binding.buttonLocationCity.visibility = View.GONE
+        binding.containerSecond.visibility = View.GONE
+
         newRequest.postValue(true)
         val keyAPI = "3b5683c272c1dfb381272ff1d030cad3"
         GlobalScope.launch {
             weatherCurrentInfoJSON.postValue(
-//            weatherCurrentInfoJSON =
                 makeRequest(
                     ("https://api.openweathermap.org/data/2.5/weather?"
                             + location) +
                             "&units=metric&appid=${keyAPI}"
                 )
             )
+            isLoading[0] = false
         }
         GlobalScope.launch {
             weatherHourlyInfoJSON.postValue(
@@ -298,6 +299,7 @@ class MainActivity : AppCompatActivity() {
                             "&exclude=current,minutely,daily,alerts&units=metric&appid=${keyAPI}"
                 )
             )
+            isLoading[1] = false
         }
         GlobalScope.launch {
             weatherWeeklyInfoJSON.postValue(
@@ -307,8 +309,6 @@ class MainActivity : AppCompatActivity() {
                             "&exclude=current,minutely,hourly,alerts&units=metric&appid=${keyAPI}"
                 )
             )
-<<<<<<< Updated upstream
-=======
             isLoading[2] = false
         }
         GlobalScope.launch {
@@ -332,7 +332,6 @@ class MainActivity : AppCompatActivity() {
                     binding.containerSecond.visibility = View.VISIBLE
                 }
             }
->>>>>>> Stashed changes
         }
     }
 }

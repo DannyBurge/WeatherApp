@@ -27,6 +27,7 @@ class OnWeeklyFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_weekly, container, false)
         mainActivity = activity as MainActivity?
+        binding.root.visibility = View.INVISIBLE
         return binding.root
     }
 
@@ -40,7 +41,7 @@ class OnWeeklyFragment : Fragment() {
     }
 
     private fun parseJsonSetText(result: String) {
-        if (!result.contains("Unable", ignoreCase = true)) {
+        if ((!result.contains("Unable", ignoreCase = true)) and (!result.contains("timeout", ignoreCase = true))) {
             val weatherInfoByDay: MutableList<WeatherByDay> = ArrayList()
             val jsonResult = JSONObject(result)
             val jsonDailyWeather = (jsonResult["daily"] as JSONArray)

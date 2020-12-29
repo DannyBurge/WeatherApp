@@ -33,6 +33,7 @@ class OnWeatherFragment : Fragment(){
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_weather, container, false)
         mainActivity = activity as MainActivity?
+        binding.root.visibility = View.INVISIBLE
         return binding.root
     }
 
@@ -57,7 +58,7 @@ class OnWeatherFragment : Fragment(){
 
     @SuppressLint("SetTextI18n")
     fun parseJsonSetText(result: String) {
-        if (!result.contains("Unable", ignoreCase = true)) {
+        if ((!result.contains("Unable", ignoreCase = true)) and (!result.contains("timeout", ignoreCase = true))) {
             val jsonResult = JSONObject(result)
             val cityName = jsonResult["name"]
 

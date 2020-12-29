@@ -28,6 +28,7 @@ class OnHourlyFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_hourly, container, false)
         mainActivity = activity as MainActivity?
+        binding.root.visibility = View.INVISIBLE
         return binding.root
     }
 
@@ -42,7 +43,7 @@ class OnHourlyFragment : Fragment() {
     }
 
     private fun parseJsonSetText(result: String) {
-        if (!result.contains("Unable", ignoreCase = true)) {
+        if ((!result.contains("Unable", ignoreCase = true)) and (!result.contains("timeout", ignoreCase = true))) {
             val weatherInfoByHour: MutableList<WeatherByHour> = ArrayList()
             val jsonResult = JSONObject(result)
             val jsonHourlyWeather = (jsonResult["hourly"] as JSONArray)
