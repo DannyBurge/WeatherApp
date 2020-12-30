@@ -1,99 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/myCardStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="2dp"
+    android:elevation="2dp"
+    android:background="@color/white"
+    android:padding="4dp">
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="8dp"
+        android:background="@color/my_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/mainTempDay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageBG"
+        app:layout_constraintTop_toTopOf="@+id/textViewTemp" />
+
+    <ImageView
+        android:id="@+id/imageBG"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="25dp"
+        android:src="@drawable/letter_bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateDay" />
+
+
+    <ImageView
+        android:id="@+id/dayWeatherInfoIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@mipmap/cloud"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBG"
+        app:layout_constraintEnd_toEndOf="@+id/imageBG"
+        app:layout_constraintStart_toStartOf="@+id/imageBG"
+        app:layout_constraintTop_toTopOf="@+id/imageBG"
+        app:tint="#757575" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/timeHourly"
+        android:id="@+id/textViewTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="12"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/appCompatTextView2"
+        android:layout_marginEnd="@dimen/marginMain"
+        android:text="Temperature:"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toStartOf="@+id/view3"
+        app:layout_constraintTop_toTopOf="@+id/imageBG" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dayWeatherInfoDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scattered clouds"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/imageBG"
+        app:layout_constraintStart_toStartOf="@+id/imageBG"
+        app:layout_constraintTop_toBottomOf="@+id/imageBG" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/dateDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12:00"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageBG"
+        app:layout_constraintStart_toStartOf="@+id/imageBG"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/appCompatTextView2"
+        android:id="@+id/mainTempDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="@+id/timeHourly"
-        app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/timeHourly"
-        app:layout_constraintVertical_bias="0.2" />
-
-    <ImageView
-        android:id="@+id/hourWeatherInfoIcon"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="4dp"
-        android:src="@mipmap/cloud"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="#878787" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/mainTempHourly"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
         android:text="-20°C"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/textView5"
-        app:layout_constraintStart_toStartOf="@+id/guideline4"
-        app:layout_constraintTop_toTopOf="@+id/guideline1" />
+        android:layout_marginEnd="@dimen/marginMain"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/view3"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Feels like:"
-        app:layout_constraintBottom_toTopOf="@+id/mainFeelsLikeTempHourly"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3" />
+        android:layout_marginStart="@dimen/marginMain"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/view3"
+        app:layout_constraintTop_toTopOf="@+id/textViewTemp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/mainFeelsLikeTempHourly"
+        android:id="@+id/mainTempNight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-10°C"
-        android:textSize="28sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/mainTempHourly"
-        app:layout_constraintEnd_toEndOf="@+id/textView5" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/hourWeatherInfoDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Scattered clouds"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/hourWeatherInfoIcon" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="32dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="149dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="16dp" />
-
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
 </androidx.constraintlayout.widget.ConstraintLayout>

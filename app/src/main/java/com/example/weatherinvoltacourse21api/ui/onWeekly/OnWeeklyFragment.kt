@@ -46,8 +46,7 @@ class OnWeeklyFragment : Fragment() {
             val jsonResult = JSONObject(result)
             val jsonDailyWeather = (jsonResult["daily"] as JSONArray)
             var dailyData: JSONObject
-            val sdfDay = java.text.SimpleDateFormat("dd")
-            val sdfMonth = java.text.SimpleDateFormat("MM")
+            val sdfDay = java.text.SimpleDateFormat("dd.MM")
             for (dayCounter in 0 until jsonDailyWeather.length()) {
                 dailyData = jsonDailyWeather.getJSONObject(dayCounter)
                 val dt = java.util.Date(dailyData["dt"].toString().toFloat().toLong() * 1000)
@@ -69,8 +68,7 @@ class OnWeeklyFragment : Fragment() {
 
                 weatherInfoByDay.add(
                     WeatherByDay(
-                        sdfDay.format(dt),
-                        sdfMonth.format(dt),
+                        "${sdfDay.format(dt)}",
                         "$dayTemp°C",
                         "$nightTemp°C",
                         weatherId,

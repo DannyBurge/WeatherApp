@@ -3,8 +3,7 @@ package com.example.weatherinvoltacourse21api.ui.onWeekly
 import java.io.FileDescriptor
 
 data class WeatherByDay(
-    val day: String,
-    val month: String,
+    val date: String,
     val dayTemp: String,
     val nightTemp: String,
     val idWeather: String,

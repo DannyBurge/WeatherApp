@@ -142,9 +142,22 @@ class OnWeatherFragment : Fragment(){
                     0,
                     abs(tempFeelsLike) * 100
                 )
-                animation.duration = 2000 // in milliseconds
+                animation.duration = 1500 // in milliseconds
                 animation.interpolator = DecelerateInterpolator()
                 animation.start()
+//
+//                //Третья шкала "От заката до рассвета"
+//                animation = ObjectAnimator.ofInt(
+//                    binding.dayDurationBar,
+//                    "progress",
+//                    0,
+//                    abs(tempFeelsLike) * 100
+//                )
+//                animation.duration = 2000 // in milliseconds
+//                animation.interpolator = DecelerateInterpolator()
+//                animation.start()
+
+
 
                 mainActivity?.noNewRequest()
             } else {

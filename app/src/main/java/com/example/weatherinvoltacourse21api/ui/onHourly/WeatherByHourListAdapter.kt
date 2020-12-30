@@ -33,11 +33,11 @@ class WeatherByHourListAdapter(
     }
 
     class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
-        private val timeHourlyView: TextView = view.findViewById(R.id.timeHourly)
-        private val mainTempHourlyView: TextView = view.findViewById(R.id.mainTempHourly)
-        private val feelsLikeTempHourlyView: TextView = view.findViewById(R.id.mainFeelsLikeTempHourly)
-        private val mainWeatherHourlyView: ImageView = view.findViewById(R.id.hourWeatherInfoIcon)
-        private val hourWeatherInfoDescription: TextView = view.findViewById(R.id.hourWeatherInfoDescription)
+        private val timeHourlyView: TextView = view.findViewById(R.id.dateDay)
+        private val mainTempHourlyView: TextView = view.findViewById(R.id.mainTempDay)
+        private val feelsLikeTempHourlyView: TextView = view.findViewById(R.id.mainTempNight)
+        private val mainWeatherHourlyView: ImageView = view.findViewById(R.id.dayWeatherInfoIcon)
+        private val hourWeatherInfoDescription: TextView = view.findViewById(R.id.dayWeatherInfoDescription)
 
         fun bind(weatherInfoByHour: WeatherByHour) {
             timeHourlyView.text = weatherInfoByHour.time

@@ -1,23 +1,21 @@
 package com.example.weatherinvoltacourse21api
 
-import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.Menu
-import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherinvoltacourse21api.databinding.ActivityCitychangeBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
-class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.OnQueryTextListener {
-
-    private lateinit var recyclerFavsView: RecyclerView
+class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
+    private lateinit var binding: ActivityCitychangeBinding
     private lateinit var adapter: FavouriteCitiesRecyclerAdapter
 
     private var citiesArray: MutableList<City> = ArrayList()
@@ -29,26 +27,14 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var prefs: SharedPreferences
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.cityselection_searchbar, menu)
-        val searchView: SearchView = (menu?.findItem(R.id.app_bar_search)?.actionView as SearchView)
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView.apply {
-            setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        }
-        searchView.isIconifiedByDefault = true
-        searchView.setOnQueryTextListener(this)
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_citychange)
-        setSupportActionBar(findViewById(R.id.listToolbar))
-        recyclerFavsView = findViewById(R.id.listFavouriteCitiesRecView)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_citychange)
+
+        binding.cityFilter.addTextChangedListener {
+            updateCityView(binding.cityFilter.text.toString())
+        }
 
         initList()
         initRecycler()
@@ -83,12 +69,10 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
     }
 
     private fun initRecycler() {
-        val recyclerView: RecyclerView = findViewById(R.id.listCitiesRecView)
         //устанавливаем наш адаптер в качестве адаптера для нашего RecyclerView,
         // попутно подавая в него обработчик событий клика
         adapter = FavouriteCitiesRecyclerAdapter(this, favouriteCitiesArray, this)
-        recyclerFavsView.adapter = adapter
-        recyclerView.adapter = CitiesRecyclerAdapter(this, citiesArray, adapter, this)
+        binding.listFavouriteCitiesRecView.adapter = adapter
     }
 
 
@@ -103,15 +87,17 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
     }
 
     private fun updateCityView(filter: String) {
-        val recyclerView: RecyclerView = findViewById(R.id.listCitiesRecView)
-        val filteredCities = citiesArray.filter { city ->
-            city.city.startsWith(
-                filter,
-                ignoreCase = true
-            )
-        } as MutableList<City>
-        recyclerView.adapter =
-            CitiesRecyclerAdapter(this, filteredCities, adapter, this)
+        var filteredCities: MutableList<City>? = null
+        if (filter.isNotEmpty()) {
+            filteredCities = citiesArray.filter { city ->
+                city.city.startsWith(
+                    filter,
+                    ignoreCase = true
+                )
+            } as MutableList<City>
+        }
+        binding.listCitiesRecView.adapter =
+            filteredCities?.let { CitiesRecyclerAdapter(this, it, adapter, this) }
     }
 
     override fun onCellClickListener(data: City) {
@@ -119,15 +105,6 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener, SearchView.
         intent.putExtra("Location", "lat=${data.latitude}&lon=${data.longitude}")
         setResult(RESULT_OK, intent)
         finish()
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String): Boolean {
-        updateCityView(newText)
-        return false
     }
 }
 
