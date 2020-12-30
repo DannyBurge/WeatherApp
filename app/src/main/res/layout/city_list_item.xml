@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="4dp">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="2dp"
+    android:background="@color/white"
+    android:elevation="2dp"
+    android:padding="4dp">
 
     <ImageView
         android:id="@+id/imageBG"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/letter_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,20 +37,20 @@
         android:layout_marginLeft="16dp"
         android:text="City"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/item_country"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBG"
         app:layout_constraintStart_toEndOf="@+id/imageBG"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@+id/item_country" />
 
     <TextView
         android:id="@+id/item_country"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Country"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/item_city"
         app:layout_constraintStart_toStartOf="@+id/item_city"
-        app:layout_constraintTop_toBottomOf="@+id/item_city" />
+        app:layout_constraintTop_toTopOf="@+id/imageBG"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
     <Button
@@ -54,17 +59,8 @@
         android:layout_height="25dp"
         android:background="@drawable/baseline_highlight_off_black_24dp"
         android:rotation="45"
-        app:layout_constraintBottom_toBottomOf="@+id/item_country"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBG"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:background="@color/my_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/item_country" />
+        app:layout_constraintTop_toTopOf="@+id/imageBG" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

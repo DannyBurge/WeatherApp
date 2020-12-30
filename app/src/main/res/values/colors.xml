@@ -15,13 +15,13 @@
     <color name="crane_purple_700">#71135C</color>
     <color name="crane_red_400">#F1135C</color>
 
-    <color name="my_color_pink">#F54F8C</color>
-    <color name="my_color_orange">#F5775B</color>
+    <color name="my_color_pink">#80F48FB1</color>
+    <color name="my_color_orange">#EF9A9A</color>
     <color name="my_color_yellow">#BDF567</color>
     <color name="my_color_green">#36F5B0</color>
     <color name="my_color_purple">#D142F5</color>
 
-    <color name="my_gray">#EFEFEF</color>
+    <color name="my_gray">#1A888888</color>
 
 
 

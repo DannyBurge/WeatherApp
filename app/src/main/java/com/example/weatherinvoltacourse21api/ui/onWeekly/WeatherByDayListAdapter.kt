@@ -34,15 +34,13 @@ class WeatherByDayListAdapter(
 
     class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
         private val dateDay: TextView = view.findViewById(R.id.dateDay)
-        private val dateMonth: TextView = view.findViewById(R.id.dateMonth)
         private val dayTemp: TextView = view.findViewById(R.id.mainTempDay)
         private val nightTemp: TextView = view.findViewById(R.id.mainTempNight)
         private val weatherMain: TextView = view.findViewById(R.id.dayWeatherInfoDescription)
         private val icon: ImageView = view.findViewById(R.id.dayWeatherInfoIcon)
 
         fun bind(weatherInfoByDay: WeatherByDay) {
-            dateDay.text = weatherInfoByDay.day
-            dateMonth.text = weatherInfoByDay.month
+            dateDay.text = weatherInfoByDay.date
             dayTemp.text = weatherInfoByDay.dayTemp
             nightTemp.text = weatherInfoByDay.nightTemp
             weatherMain.text = weatherInfoByDay.weatherDescription

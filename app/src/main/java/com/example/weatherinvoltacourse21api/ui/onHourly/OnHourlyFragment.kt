@@ -48,7 +48,7 @@ class OnHourlyFragment : Fragment() {
             val jsonResult = JSONObject(result)
             val jsonHourlyWeather = (jsonResult["hourly"] as JSONArray)
             var hourlyData: JSONObject
-            val sdf = java.text.SimpleDateFormat("H")
+            val sdf = java.text.SimpleDateFormat("HH:mm")
             for (hourCounter in 0..12) {
                 hourlyData = jsonHourlyWeather.getJSONObject(hourCounter)
                 val dt = Date((hourlyData["dt"].toString().toFloat() * 1000).toLong())
@@ -62,7 +62,15 @@ class OnHourlyFragment : Fragment() {
                     (hourlyData["weather"] as JSONArray).getJSONObject(0).toString()
                 )["description"]).toString().capitalize(Locale.ROOT)
 
-                weatherInfoByHour.add(WeatherByHour(sdf.format(toNearestHour(dt)), "$tempMain°C", "$feelsLikeMain°C", weatherId, weatherDescription))
+                weatherInfoByHour.add(
+                    WeatherByHour(
+                        sdf.format(toNearestHour(dt)),
+                        "$tempMain°C",
+                        "$feelsLikeMain°C",
+                        weatherId,
+                        "$weatherDescription"
+                    )
+                )
             }
             binding.hourlyWeatherList.adapter =
                 WeatherByHourListAdapter(binding.hourlyWeatherContainer.context, weatherInfoByHour)
