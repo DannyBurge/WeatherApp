@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
@@ -76,6 +77,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.containerSecond.visibility = View.INVISIBLE
         binding.viewPager.visibility = View.INVISIBLE
@@ -96,11 +98,6 @@ class MainActivity : AppCompatActivity() {
             if (!isLocationGranted()) {
                 getLocalPermissions()
             } else checkIfThereIsFavouriteCity()
-        }
-
-        binding.buttonLocationCity.setOnClickListener {
-            val intent = Intent(this, RecyclerViewActivity::class.java)
-            startActivityForResult(intent, 1)
         }
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
@@ -276,7 +273,6 @@ class MainActivity : AppCompatActivity() {
     private fun requestWeather(location: String) {
         val isLoading = arrayOf(true, true, true)
         binding.loadingProgressBar.show()
-        binding.buttonLocationCity.visibility = View.GONE
         binding.containerSecond.visibility = View.GONE
 
         newRequest.postValue(true)
@@ -325,7 +321,6 @@ class MainActivity : AppCompatActivity() {
                     )
                 ) {
                     binding.viewPager.visibility = View.VISIBLE
-                    binding.buttonLocationCity.visibility = View.VISIBLE
                     binding.containerSecond.visibility = View.GONE
                 } else {
                     binding.viewPager.visibility = View.INVISIBLE

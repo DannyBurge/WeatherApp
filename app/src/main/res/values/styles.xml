@@ -15,7 +15,7 @@
     </style>
 
     <style name="myCircularBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:max">6000</item>
         <item name="android:min">0</item>
@@ -34,5 +34,21 @@
 
     <style name="myCircularBar.Inner">
         <item name="android:background">@drawable/progress_bar_bg_inner</item>
+    </style>
+
+    <style name="iconLeft">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginStart">@dimen/marginMain</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
+
+    <style name="iconRight">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_marginEnd">@dimen/marginMain</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
     </style>
 </resources>

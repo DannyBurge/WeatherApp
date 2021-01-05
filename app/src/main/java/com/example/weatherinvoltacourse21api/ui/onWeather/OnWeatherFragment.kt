@@ -2,6 +2,7 @@ package com.example.weatherinvoltacourse21api.ui.onWeather
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import com.example.weatherinvoltacourse21api.MainActivity
 import com.example.weatherinvoltacourse21api.R
+import com.example.weatherinvoltacourse21api.RecyclerViewActivity
 import com.example.weatherinvoltacourse21api.databinding.FragmentWeatherBinding
 import org.json.JSONArray
 import org.json.JSONObject
@@ -34,6 +36,13 @@ class OnWeatherFragment : Fragment(){
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_weather, container, false)
         mainActivity = activity as MainActivity?
         binding.root.visibility = View.INVISIBLE
+
+
+        binding.buttonLocationCity.setOnClickListener {
+            val intent = Intent(mainActivity, RecyclerViewActivity::class.java)
+            startActivityForResult(intent, 1)
+        }
+
         return binding.root
     }
 
@@ -92,17 +101,17 @@ class OnWeatherFragment : Fragment(){
             binding.cityName.text = "$cityName"
 
             binding.tempMain.text = "${temp}°C"
-            binding.tempMax.text = "Max temperature: ${tempMax}°C"
-            binding.tempMin.text = "Min temperature: ${tempMin}°C"
+            binding.tempMax.text = "${tempMax}°C"
+            binding.tempMin.text = "${tempMin}°C"
             binding.tempFeelsLike.text = "Feels Like: ${tempFeelsLike}°C"
 
-            binding.mainWeather.text = "${weatherInfo}"
+            binding.mainWeather.text = "$weatherInfo"
             binding.sunRise.text = sdf.format(sunriseTime)
             binding.sunSet.text = sdf.format(sunsetTime)
-            binding.windInfo.text = "${windSpeed} m/s"
-            binding.humidityInfo.text = "${humidity} %"
-            binding.visibilityInfo.text = "${visibility} km"
-            binding.pressureInfo.text = "${pressure} mm Hg"
+            binding.windInfo.text = "$windSpeed m/s"
+            binding.humidityInfo.text = "$humidity %"
+            binding.visibilityInfo.text = "$visibility km"
+            binding.pressureInfo.text = "$pressure mmHg"
 
             val barMain: ProgressBar
             val barFeelsLike: ProgressBar
