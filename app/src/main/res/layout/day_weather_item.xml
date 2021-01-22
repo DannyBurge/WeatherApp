@@ -67,7 +67,7 @@
         android:id="@+id/dateDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="30.12"
+        android:text="Wen, 30.12"
         android:textSize="@dimen/fontSizeSmall"
         app:layout_constraintEnd_toEndOf="@+id/imageBG"
         app:layout_constraintStart_toStartOf="@+id/imageBG"

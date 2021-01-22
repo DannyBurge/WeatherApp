@@ -6,7 +6,7 @@ data class WeatherByDay(
     val date: String,
     val dayTemp: String,
     val nightTemp: String,
-    val idWeather: String,
+    val idWeather: Int,
     val weatherDescription: String,
 
     val pressure: String,

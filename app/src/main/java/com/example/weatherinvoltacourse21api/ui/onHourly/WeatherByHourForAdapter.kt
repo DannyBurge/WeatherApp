@@ -4,6 +4,6 @@ data class WeatherByHour(
     val time: String,
     val mainTemp: String,
     val feelsLikeTemp: String,
-    val idWeather: String,
+    val idWeather: Int,
     val description: String
 )

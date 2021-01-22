@@ -102,7 +102,7 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
 
     override fun onCellClickListener(data: City) {
         val intent = Intent()
-        intent.putExtra("Location", "lat=${data.latitude}&lon=${data.longitude}")
+        intent.putExtra("Location", floatArrayOf(data.latitude,data.longitude))
         setResult(RESULT_OK, intent)
         finish()
     }

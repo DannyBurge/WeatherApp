@@ -24,15 +24,25 @@ import com.example.weatherinvoltacourse21api.ui.onWeekly.OnWeeklyFragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
+    private var cityName: String? = null
+
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
 
     lateinit var binding: ActivityMainBinding
+
+    lateinit var retrofit: Retrofit
+    lateinit var weatherInfoAPI: WeatherInfoAPI
 
     private val newRequest = MutableLiveData<Boolean>()
     fun isNewRequest(): LiveData<Boolean> {
@@ -43,19 +53,19 @@ class MainActivity : AppCompatActivity() {
         newRequest.value = false
     }
 
-    private val weatherCurrentInfoJSON = MutableLiveData<String>()
-    fun getCurrentInfo(): LiveData<String> {
-        return weatherCurrentInfoJSON
+    private var weatherCurrentInfo = MutableLiveData<CurrentWeatherData>()
+    fun getCurrentInfo(): LiveData<CurrentWeatherData> {
+        return weatherCurrentInfo
     }
 
-    private val weatherHourlyInfoJSON = MutableLiveData<String>()
-    fun getHourlyInfo(): LiveData<String> {
-        return weatherHourlyInfoJSON
+    private var weatherHourlyInfo = MutableLiveData<List<HourWeatherData>>()
+    fun getHourlyInfo(): LiveData<List<HourWeatherData>> {
+        return weatherHourlyInfo
     }
 
-    private val weatherWeeklyInfoJSON = MutableLiveData<String>()
-    fun getWeeklyInfo(): LiveData<String> {
-        return weatherWeeklyInfoJSON
+    private var weatherWeeklyInfo = MutableLiveData<List<DayWeatherData>>()
+    fun getWeeklyInfo(): LiveData<List<DayWeatherData>> {
+        return weatherWeeklyInfo
     }
 
     private fun checkIfThereIsFavouriteCity() {
@@ -68,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 if (cityInfo[4].toBoolean()) {
                     if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
                         getLastKnownLocation()
-                    } else requestWeather("lat=${cityInfo[3]}&lon=${cityInfo[2]}")
+                    } else requestWeather(floatArrayOf(cityInfo[2].toFloat(),cityInfo[3].toFloat()))
                 }
             }
         }
@@ -77,7 +87,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        retrofit = Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        weatherInfoAPI = retrofit.create(WeatherInfoAPI::class.java)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.containerSecond.visibility = View.INVISIBLE
         binding.viewPager.visibility = View.INVISIBLE
@@ -160,12 +177,13 @@ class MainActivity : AppCompatActivity() {
         if (data == null) {
             return
         } else {
-            val location = data.getStringExtra("Location")
+            val location = data.getFloatArrayExtra("Location")
+            cityName = data.getStringExtra("CityName")
             if (location != null) {
-                if (location == "lat=0.0&lon=0.0") {
+                if ((location[0] == 0f) and (location[1] == 0f)) {
                     getLastKnownLocation()
                 } else {
-                    requestWeather("$location")
+                    requestWeather(location)
                 }
             } else {
                 if (resultCode == 0) {
@@ -200,9 +218,8 @@ class MainActivity : AppCompatActivity() {
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
 
         locationProvider?.lastLocation?.addOnSuccessListener { location ->
-
             if (location != null) {
-                requestWeather("lat=${location.latitude}&lon=${location.longitude}")
+                requestWeather(floatArrayOf(location.latitude.toFloat(),location.longitude.toFloat()))
             }
         }
 
@@ -270,61 +287,54 @@ class MainActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED))
     }
 
-    private fun requestWeather(location: String) {
-        val isLoading = arrayOf(true, true, true)
+    private fun requestWeather(location: FloatArray) {
+        val isLoading = arrayOf(true, true)
         binding.loadingProgressBar.show()
         binding.containerSecond.visibility = View.GONE
 
         newRequest.postValue(true)
-        val keyAPI = "3b5683c272c1dfb381272ff1d030cad3"
-        GlobalScope.launch {
-            weatherCurrentInfoJSON.postValue(
-                makeRequest(
-                    ("https://api.openweathermap.org/data/2.5/weather?"
-                            + location) +
-                            "&units=metric&appid=${keyAPI}"
-                )
-            )
-            isLoading[0] = false
-        }
-        GlobalScope.launch {
-            weatherHourlyInfoJSON.postValue(
-                makeRequest(
-                    "https://api.openweathermap.org/data/2.5/onecall?"
-                            + location +
-                            "&exclude=current,minutely,daily,alerts&units=metric&appid=${keyAPI}"
-                )
-            )
-            isLoading[1] = false
-        }
-        GlobalScope.launch {
-            weatherWeeklyInfoJSON.postValue(
-                makeRequest(
-                    "https://api.openweathermap.org/data/2.5/onecall?"
-                            + location +
-                            "&exclude=current,minutely,hourly,alerts&units=metric&appid=${keyAPI}"
-                )
-            )
-            isLoading[2] = false
-        }
-        GlobalScope.launch {
-            while (true) {
-                if (!isLoading[0] and !isLoading[1] and !isLoading[2]) {
-                    break
-                }
-                delay(300)
-            }
-            withContext(Dispatchers.Main) {
+
+        weatherInfoAPI.getCurrentWeatherInfo(location[0], location[1])?.enqueue(object : Callback<CurrentWeatherData?> {
+            override fun onFailure(call: Call<CurrentWeatherData?>, t: Throwable) {
+                binding.containerSecond.visibility = View.VISIBLE
                 binding.loadingProgressBar.hide()
-                if (!(weatherCurrentInfoJSON.value + weatherHourlyInfoJSON.value + weatherWeeklyInfoJSON.value).contains(
-                        Regex("timeout|Unable")
-                    )
-                ) {
-                    binding.viewPager.visibility = View.VISIBLE
-                    binding.containerSecond.visibility = View.GONE
-                } else {
-                    binding.viewPager.visibility = View.INVISIBLE
-                    binding.containerSecond.visibility = View.VISIBLE
+            }
+
+            override fun onResponse(
+                call: Call<CurrentWeatherData?>,
+                response: Response<CurrentWeatherData?>
+            ) {
+                weatherCurrentInfo.postValue(response.body()!!)
+                isLoading[0] = false
+            }
+        })
+
+        weatherInfoAPI.getHourlyDailyWeatherInfo(location[0], location[1])?.enqueue(object : Callback<OneCallWeatherData?> {
+            override fun onFailure(call: Call<OneCallWeatherData?>, t: Throwable) {
+                binding.containerSecond.visibility = View.VISIBLE
+                binding.loadingProgressBar.hide()
+            }
+
+            override fun onResponse(
+                call: Call<OneCallWeatherData?>,
+                response: Response<OneCallWeatherData?>
+            ) {
+                weatherHourlyInfo.postValue(response.body()!!.hourly)
+                weatherWeeklyInfo.postValue(response.body()!!.daily)
+                isLoading[1] = false
+            }
+        })
+
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                while (true) {
+                    if (!isLoading[0] and !isLoading[1]) {
+                        binding.loadingProgressBar.hide()
+                        binding.viewPager.visibility = View.VISIBLE
+                        binding.containerSecond.visibility = View.GONE
+                        break
+                    }
+                    delay(300)
                 }
             }
         }
