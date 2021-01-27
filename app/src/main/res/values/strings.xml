@@ -5,15 +5,5 @@
     <string name="title_weatherWeekly">Daily</string>
     <string name="city_name">City name</string>
     <string name="addInFavourite">Add to favourite cities</string>
-    <string-array name="Cities">
-        <item>United Arab Emirates,Abu Dhabi</item>
-        <item>Nigeria,Abuja</item>
-        <item>Ghana,Accra</item>
-        <item>Ethiopia,Addis Ababa</item>
-        <item>Algeria,Algiers</item>
-        <item>Jordan,Amman</item>
-        <item>Netherlands,Amsterdam</item>
-        <item>Andorra,Andorra la Vella</item>
-        <item>Turkey,Ankara</item>
-    </string-array>
+    <string name="InternetIssue">Something wrong with your internet connection</string>
 </resources>

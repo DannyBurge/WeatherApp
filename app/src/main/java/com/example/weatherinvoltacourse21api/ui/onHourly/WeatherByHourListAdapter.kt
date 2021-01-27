@@ -36,7 +36,7 @@ class WeatherByHourListAdapter(
         private val timeHourlyView: TextView = view.findViewById(R.id.dateDay)
         private val mainTempHourlyView: TextView = view.findViewById(R.id.mainTempDay)
         private val feelsLikeTempHourlyView: TextView = view.findViewById(R.id.mainTempNight)
-        private val icon: ImageView = view.findViewById(R.id.dayWeatherInfoIcon)
+        private val icon: ImageView = view.findViewById(R.id.hourWeatherInfoIcon)
         private val hourWeatherInfoDescription: TextView = view.findViewById(R.id.dayWeatherInfoDescription)
 
         fun bind(weatherInfoByHour: WeatherByHourForAdapter) {
@@ -50,7 +50,7 @@ class WeatherByHourListAdapter(
                 5 -> icon.setImageResource(R.mipmap.rain)
                 6 -> icon.setImageResource(R.mipmap.snow)
                 7 -> icon.setImageResource(R.mipmap.dry)
-                8 -> when(weatherInfoByHour.idWeather%100/10) {
+                8 -> when(weatherInfoByHour.idWeather%100) {
                     0 -> icon.setImageResource(R.mipmap.sun)
                     1 -> icon.setImageResource(R.mipmap.sun_cloud)
                     2 -> icon.setImageResource(R.mipmap.cloud)

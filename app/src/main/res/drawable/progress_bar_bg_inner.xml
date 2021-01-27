@@ -6,5 +6,5 @@
     android:useLevel="false">
     <solid
         android:width="3dp"
-        android:color="@color/my_gray" />
+        android:color="@color/backgroundTempBar" />
 </shape>

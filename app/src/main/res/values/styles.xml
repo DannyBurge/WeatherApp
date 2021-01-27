@@ -1,17 +1,36 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
-
-    <style name="myAnimations" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/activity_down_up_enter</item>
-        <item name="android:activityOpenExitAnimation">@anim/activity_down_up_exit</item>
-        <item name="android:activityCloseExitAnimation">@anim/activity_down_up_close_exit</item>
-        <item name="android:activityCloseEnterAnimation">@anim/activity_down_up_close_enter</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor" tools:targetApi="l">@color/mainBGStart</item>
+        <item name="android:windowBackground">@drawable/main_bg</item>
+        <item name="android:textColor">@color/allTextColor</item>
     </style>
 
+    <color name="feelsLikeColdBar">@color/material_blue_200</color>
+    <color name="mainTempColdBar">@color/material_blue_400</color>
+    <color name="feelsLikeHotBar">@color/material_red_300</color>
+    <color name="mainTempHotBar">@color/material_red_400</color>
+
     <style name="myCardStyle">
-        <item name="android:elevation">4dp</item>
-        <item name="android:background">@color/main</item>
+        <item name="android:background">@color/cardBackground</item>
+        <item name="android:layout_marginVertical">@dimen/marginCardVertical</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+    </style>
+
+    <style name="myDividerStyle">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_marginVertical">8dp</item>
+        <item name="android:background">@color/allTextColor</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+    </style>
+
+    <style name="myDividerStyle.Bias06">
+        <item name="layout_constraintHorizontal_bias">0.6</item>
     </style>
 
     <style name="myCircularBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
@@ -20,35 +39,35 @@
         <item name="android:max">6000</item>
         <item name="android:min">0</item>
         <item name="android:progress">3000</item>
-        <item name="android:background">@drawable/progress_bar_bg</item>
         <item name="android:rotation">90</item>
     </style>
 
-    <style name="ProgressBarBGColor">
-        <item name="android:color">#FBFBFB</item>
+    <style name="weatherIcon">
+        <item name="android:layout_width">@dimen/weatherIconSize</item>
+        <item name="android:layout_height">@dimen/weatherIconSize</item>
+        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="tint">@color/allTextColor</item>
     </style>
 
-    <style name="dayDurationBarStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:color">#FBFBFB</item>
-    </style>
-
-    <style name="myCircularBar.Inner">
-        <item name="android:background">@drawable/progress_bar_bg_inner</item>
-    </style>
-
-    <style name="iconLeft">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_marginStart">@dimen/marginMain</item>
+    <style name="weatherIcon.Left">
         <item name="layout_constraintStart_toStartOf">parent</item>
-        <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="android:layout_marginStart">@dimen/marginMain</item>
     </style>
 
-    <style name="iconRight">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_marginEnd">@dimen/marginMain</item>
+    <style name="weatherIcon.Right">
         <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="android:layout_marginEnd">@dimen/marginMain</item>
+    </style>
+
+    <style name="icon">
+        <item name="android:layout_width">@dimen/iconSize</item>
+        <item name="elevation">@dimen/iconSize</item>
+        <item name="android:layout_height">@dimen/iconSize</item>
         <item name="layout_constraintTop_toTopOf">parent</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintBottom_toBottomOf">parent</item>
+        <item name="android:src">@drawable/letter_bg</item>
+        <item name="android:layout_marginVertical">@dimen/marginCardVertical</item>
     </style>
 </resources>

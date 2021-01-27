@@ -1,11 +1,14 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="innerRadiusOuter">150dp</dimen>
     <dimen name="innerRadiusInner">140dp</dimen>
-    <dimen name="dayDurationBarRadiusRation">75</dimen>
     <dimen name="thickRation">60</dimen>
     <dimen name="fontSize">20sp</dimen>
+    <dimen name="fontSizeBig">24sp</dimen>
     <dimen name="fontSizeSmall">13sp</dimen>
-    <dimen name="marginMain">16dp</dimen>
+    <dimen name="marginMain">32dp</dimen>
+    <dimen name="marginMainSmall">16dp</dimen>
+    <dimen name="marginCardVertical">4dp</dimen>
     <dimen name="marginMainDouble">32dp</dimen>
+    <dimen name="iconSize">50dp</dimen>
+    <dimen name="weatherIconSize">40dp</dimen>
 </resources>

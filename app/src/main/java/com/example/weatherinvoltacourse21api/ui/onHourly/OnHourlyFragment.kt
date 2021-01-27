@@ -47,13 +47,14 @@ class OnHourlyFragment : Fragment() {
         for (hourWeather in hourlyWeatherInfo) {
             weatherInfoByHour.add(
                 WeatherByHourForAdapter(
-                    sdf.format(toNearestHour(Date(hourWeather.dt*1000))),
+                    sdf.format(toNearestHour(Date(hourWeather.dt * 1000))),
                     "${hourWeather.temp.toInt()}°C",
                     "${hourWeather.feels_like.toInt()}°C",
                     hourWeather.weather[0].id,
                     hourWeather.weather[0].description
                 )
             )
+            if (weatherInfoByHour.size == 12) break
         }
         binding.hourlyWeatherList.adapter =
             WeatherByHourListAdapter(binding.hourlyWeatherContainer.context, weatherInfoByHour)

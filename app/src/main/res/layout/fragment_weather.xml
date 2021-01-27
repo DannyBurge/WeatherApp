@@ -7,6 +7,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="3dp"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,9 +21,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="@dimen/marginMain"
                 android:gravity="center"
                 android:text="@string/city_name"
-                android:layout_marginStart="@dimen/marginMain"
                 android:textSize="36sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -31,8 +32,8 @@
                 android:id="@+id/buttonLocationCity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Change"
                 android:layout_marginStart="@dimen/marginMain"
+                android:text="Change"
                 android:textSize="16sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/cityName"
                 app:layout_constraintStart_toEndOf="@+id/cityName" />
@@ -58,7 +59,7 @@
 
             <ProgressBar
                 android:id="@+id/tempFeelsLikeBar"
-                style="@style/myCircularBar.Inner"
+                style="@style/myCircularBar"
                 android:progressDrawable="@drawable/circular_feelslike_weather_bar"
                 android:rotationY="180"
                 app:layout_constraintBottom_toBottomOf="@+id/tempHot"
@@ -68,7 +69,7 @@
 
             <ProgressBar
                 android:id="@+id/tempColdFeelsLikeBar"
-                style="@style/myCircularBar.Inner"
+                style="@style/myCircularBar"
                 android:progressDrawable="@drawable/circular_feelslike_revert_weather_bar"
                 android:rotation="90"
                 app:layout_constraintBottom_toBottomOf="@+id/tempHot"
@@ -110,19 +111,15 @@
                 android:layout_gravity="center"
                 android:text="Feels like: 0°C"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tempMain"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tempMain" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/myCardStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="2dp"
-            android:background="@color/white"
-            android:elevation="2dp"
-            android:padding="4dp">
+            android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textViewTemp"
@@ -160,63 +157,19 @@
                 app:layout_constraintStart_toStartOf="@+id/textViewTemp2"
                 app:layout_constraintTop_toBottomOf="@+id/textViewTemp2" />
 
-            <ImageView
-                android:id="@+id/sansetIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/cloud"
-                app:layout_constraintBottom_toBottomOf="@+id/imageSunsetBG"
-                app:layout_constraintEnd_toEndOf="@+id/imageSunsetBG"
-                app:layout_constraintStart_toStartOf="@+id/imageSunsetBG"
-                app:layout_constraintTop_toTopOf="@+id/imageSunsetBG"
-                app:tint="#757575" />
-
             <View
                 android:id="@+id/view3"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/my_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageSunsetBG"
-                style="@style/iconRight"
-                android:src="@drawable/letter_bg" />
-
-            <ImageView
-                android:id="@+id/imageSunriseBG"
-                style="@style/iconLeft"
-                android:src="@drawable/letter_bg" />
-
+                style="@style/myDividerStyle" />
 
             <ImageView
                 android:id="@+id/daySunsetIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/sunset"
-
-                app:layout_constraintBottom_toBottomOf="@+id/imageSunsetBG"
-                app:layout_constraintEnd_toEndOf="@+id/imageSunsetBG"
-                app:layout_constraintStart_toStartOf="@+id/imageSunsetBG"
-                app:layout_constraintTop_toTopOf="@+id/imageSunsetBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/sunset" />
 
             <ImageView
                 android:id="@+id/daySunriseIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/sunrise"
-
-                app:layout_constraintBottom_toBottomOf="@+id/imageSunriseBG"
-                app:layout_constraintEnd_toEndOf="@+id/imageSunriseBG"
-                app:layout_constraintStart_toStartOf="@+id/imageSunriseBG"
-                app:layout_constraintTop_toTopOf="@+id/imageSunriseBG"
-                app:tint="#878787" />
-
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/sunrise" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sunRise"
@@ -231,13 +184,9 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/myCardStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="2dp"
-            android:background="@color/white"
-            android:elevation="2dp"
-            android:padding="4dp">
+            android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textViewTemp4"
@@ -265,48 +214,17 @@
 
             <View
                 android:id="@+id/view4"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/my_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageTempMaxBG"
-                style="@style/iconLeft"
-                android:src="@drawable/letter_bg" />
-
-            <ImageView
-                android:id="@+id/imageTempMinBG"
-                style="@style/iconRight"
-                android:src="@drawable/letter_bg" />
+                style="@style/myDividerStyle" />
 
             <ImageView
                 android:id="@+id/tempMaxIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/temp_up"
-
-                app:layout_constraintBottom_toBottomOf="@+id/imageTempMaxBG"
-                app:layout_constraintEnd_toEndOf="@+id/imageTempMaxBG"
-                app:layout_constraintStart_toStartOf="@+id/imageTempMaxBG"
-                app:layout_constraintTop_toTopOf="@+id/imageTempMaxBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/temp_up" />
 
             <ImageView
                 android:id="@+id/tempMinIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/temp_down"
-
-                app:layout_constraintBottom_toBottomOf="@+id/imageTempMinBG"
-                app:layout_constraintEnd_toEndOf="@+id/imageTempMinBG"
-                app:layout_constraintStart_toStartOf="@+id/imageTempMinBG"
-                app:layout_constraintTop_toTopOf="@+id/imageTempMinBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/temp_down" />
 
 
             <TextView
@@ -335,13 +253,9 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
+            style="@style/myCardStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="2dp"
-            android:background="@color/white"
-            android:elevation="2dp"
-            android:padding="4dp">
+            android:layout_height="wrap_content">
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -371,47 +285,17 @@
 
             <View
                 android:id="@+id/view5"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/my_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/humidityBG"
-                style="@style/iconLeft"
-                android:src="@drawable/letter_bg" />
-
-            <ImageView
-                android:id="@+id/imageWindBG"
-                style="@style/iconRight"
-                android:src="@drawable/letter_bg" />
+                style="@style/myDividerStyle" />
 
             <ImageView
                 android:id="@+id/humidityIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/wet"
-                app:layout_constraintBottom_toBottomOf="@+id/humidityBG"
-                app:layout_constraintEnd_toEndOf="@+id/humidityBG"
-                app:layout_constraintStart_toStartOf="@+id/humidityBG"
-                app:layout_constraintTop_toTopOf="@+id/humidityBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/wet" />
 
             <ImageView
                 android:id="@+id/windIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/wind"
-                app:layout_constraintBottom_toBottomOf="@+id/imageWindBG"
-                app:layout_constraintEnd_toEndOf="@+id/imageWindBG"
-                app:layout_constraintStart_toStartOf="@+id/imageWindBG"
-                app:layout_constraintTop_toTopOf="@+id/imageWindBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/wind" />
 
             <TextView
                 android:id="@+id/humidityInfo"
@@ -437,13 +321,9 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/myCardStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginVertical="2dp"
-            android:background="@color/white"
-            android:elevation="2dp"
-            android:padding="4dp">
+            android:layout_height="wrap_content">
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -473,47 +353,17 @@
 
             <View
                 android:id="@+id/view6"
-                android:layout_width="1dp"
-                android:layout_height="0dp"
-                android:layout_marginVertical="8dp"
-                android:background="@color/my_gray"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/pressureBG"
-                style="@style/iconLeft"
-                android:src="@drawable/letter_bg" />
-
-            <ImageView
-                android:id="@+id/visibilityBG"
-                style="@style/iconRight"
-                android:src="@drawable/letter_bg" />
+                style="@style/myDividerStyle" />
 
             <ImageView
                 android:id="@+id/pressureIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/pressure"
-                app:layout_constraintBottom_toBottomOf="@+id/pressureBG"
-                app:layout_constraintEnd_toEndOf="@+id/pressureBG"
-                app:layout_constraintStart_toStartOf="@+id/pressureBG"
-                app:layout_constraintTop_toTopOf="@+id/pressureBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/pressure" />
 
             <ImageView
                 android:id="@+id/visibilityIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@mipmap/visibility"
-                app:layout_constraintBottom_toBottomOf="@+id/visibilityBG"
-                app:layout_constraintEnd_toEndOf="@+id/visibilityBG"
-                app:layout_constraintStart_toStartOf="@+id/visibilityBG"
-                app:layout_constraintTop_toTopOf="@+id/visibilityBG"
-                app:tint="#878787" />
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/visibility" />
 
             <TextView
                 android:id="@+id/pressureInfo"

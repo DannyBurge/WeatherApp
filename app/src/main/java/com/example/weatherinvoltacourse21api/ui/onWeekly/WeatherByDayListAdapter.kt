@@ -51,7 +51,7 @@ class WeatherByDayListAdapter(
                 5 -> icon.setImageResource(R.mipmap.rain)
                 6 -> icon.setImageResource(R.mipmap.snow)
                 7 -> icon.setImageResource(R.mipmap.dry)
-                8 -> when(weatherInfoByDay.idWeather%100/10) {
+                8 -> when(weatherInfoByDay.idWeather%100) {
                     0 -> icon.setImageResource(R.mipmap.sun)
                     1 -> icon.setImageResource(R.mipmap.sun_cloud)
                     2 -> icon.setImageResource(R.mipmap.cloud)

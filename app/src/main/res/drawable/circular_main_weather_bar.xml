@@ -6,7 +6,7 @@
     android:useLevel="true">
 
     <gradient
-        android:centerColor="@color/crane_red_400"
+        android:centerColor="@color/mainTempHotBar"
         android:endColor="@color/black"
         android:startColor="@color/clear"
         android:type="sweep" />
