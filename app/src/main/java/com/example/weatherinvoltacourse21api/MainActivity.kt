@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onCreateDialog(id: Int): Dialog {
         isDialogShowing = true
         return super.onCreateDialog(id)

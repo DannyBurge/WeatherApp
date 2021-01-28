@@ -38,7 +38,7 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:max">6000</item>
         <item name="android:min">0</item>
-        <item name="android:progress">3000</item>
+        <item name="android:progress">1500</item>
         <item name="android:rotation">90</item>
     </style>
 

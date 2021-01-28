@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 class FavouriteCitiesRecyclerAdapter(
     context: Context,
     private val favouriteCities: MutableLiveData<MutableList<City>>,
-//    var prefs: SharedPreferences,
     private val cellClickListener: CellClickListener
 ) :
     RecyclerView.Adapter<FavouriteCitiesRecyclerAdapter.ViewHolder>() {

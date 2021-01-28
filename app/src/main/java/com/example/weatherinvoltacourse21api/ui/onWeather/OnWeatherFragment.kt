@@ -21,7 +21,7 @@ import com.example.weatherinvoltacourse21api.databinding.FragmentWeatherBinding
 import kotlin.math.abs
 
 
-class OnWeatherFragment : Fragment(){
+class OnWeatherFragment : Fragment() {
 
     var mainActivity: MainActivity? = null
     private lateinit var binding: FragmentWeatherBinding
@@ -66,69 +66,67 @@ class OnWeatherFragment : Fragment(){
 
     @SuppressLint("SetTextI18n")
     fun setText(currentWeatherInfo: CurrentWeatherData) {
-            val sdf = java.text.SimpleDateFormat("HH:mm")
+        val sdf = java.text.SimpleDateFormat("HH:mm")
 
-            binding.cityName.text = currentWeatherInfo.name
+        binding.cityName.text = currentWeatherInfo.name
 
-            binding.tempMain.text = "${currentWeatherInfo.main.temp.toInt()}°C"
-            binding.tempMax.text = "${currentWeatherInfo.main.temp_max.toInt()}°C"
-            binding.tempMin.text = "${currentWeatherInfo.main.temp_min.toInt()}°C"
-            binding.tempFeelsLike.text = "Feels Like: ${currentWeatherInfo.main.feels_like.toInt()}°C"
+        binding.tempMain.text = "${currentWeatherInfo.main.temp.toInt()}°C"
+        binding.tempMax.text = "${currentWeatherInfo.main.temp_max.toInt()}°C"
+        binding.tempMin.text = "${currentWeatherInfo.main.temp_min.toInt()}°C"
+        binding.tempFeelsLike.text = "Feels Like: ${currentWeatherInfo.main.feels_like.toInt()}°C"
 
-            binding.mainWeather.text = currentWeatherInfo.weather[0].description
-            binding.sunRise.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunrise * 1000))
-            binding.sunSet.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunset * 1000))
-            binding.windInfo.text = "${currentWeatherInfo.wind.speed} m/s"
-            binding.humidityInfo.text = "${currentWeatherInfo.main.humidity} %"
-            binding.visibilityInfo.text = "${(currentWeatherInfo.visibility/1000).toInt()} km"
-            binding.pressureInfo.text = "${currentWeatherInfo.main.pressure} mmHg"
+        binding.mainWeather.text = currentWeatherInfo.weather[0].description
+        binding.sunRise.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunrise * 1000))
+        binding.sunSet.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunset * 1000))
+        binding.windInfo.text = "${currentWeatherInfo.wind.speed} m/s"
+        binding.humidityInfo.text = "${currentWeatherInfo.main.humidity} %"
+        binding.visibilityInfo.text = "${(currentWeatherInfo.visibility / 1000).toInt()} km"
+        binding.pressureInfo.text = "${currentWeatherInfo.main.pressure} mmHg"
 
-            val barMain: ProgressBar
-            val barFeelsLike: ProgressBar
+        val barMain: ProgressBar
+        val barFeelsLike: ProgressBar
 
-            if (currentWeatherInfo.main.temp < 0) {
-                barMain = binding.tempCold
-                barFeelsLike = binding.tempColdFeelsLikeBar
-                binding.tempHot.visibility = View.INVISIBLE
-                binding.tempFeelsLikeBar.visibility = View.INVISIBLE
-                binding.tempCold.visibility = View.VISIBLE
-                binding.tempColdFeelsLikeBar.visibility = View.VISIBLE
-            } else {
-                barMain = binding.tempHot
-                barFeelsLike = binding.tempFeelsLikeBar
-                binding.tempHot.visibility = View.VISIBLE
-                binding.tempFeelsLikeBar.visibility = View.VISIBLE
-                binding.tempCold.visibility = View.INVISIBLE
-                binding.tempColdFeelsLikeBar.visibility = View.INVISIBLE
-            }
+        if (currentWeatherInfo.main.temp < 0) {
+            barMain = binding.barOutBlue
+            barFeelsLike = binding.barInBlue
+            binding.barOutRed.visibility = View.INVISIBLE
+            binding.barInRed.visibility = View.INVISIBLE
+        } else {
+            barMain = binding.barOutRed
+            barFeelsLike = binding.barInRed
+            binding.barOutBlue.visibility = View.INVISIBLE
+            binding.barInBlue.visibility = View.INVISIBLE
+        }
+        barMain.visibility = View.VISIBLE
+        barFeelsLike.visibility = View.VISIBLE
 
-            if (doAnimation) {
-                //Первая шкала "Температура"
-                var animation = ObjectAnimator.ofInt(
-                    barMain,
-                    "progress",
-                    0,
-                    abs(currentWeatherInfo.main.temp.toInt()) * 100,
-                ) // see this max value coming back here, we animate towards that value
-                animation.duration = 1500 // in milliseconds
-                animation.interpolator = DecelerateInterpolator()
-                animation.start()
+        if (doAnimation) {
+            //Первая шкала "Температура"
+            var animation = ObjectAnimator.ofInt(
+                barMain,
+                "progress",
+                0,
+                abs(currentWeatherInfo.main.temp.toInt()) * 100,
+            ) // see this max value coming back here, we animate towards that value
+            animation.duration = 1500 // in milliseconds
+            animation.interpolator = DecelerateInterpolator()
+            animation.start()
 
-                //Вторая шкала "Температура по ощущениям"
-                animation = ObjectAnimator.ofInt(
-                    barFeelsLike,
-                    "progress",
-                    0,
-                    abs(currentWeatherInfo.main.feels_like.toInt()) * 100
-                )
-                animation.duration = 1500 // in milliseconds
-                animation.interpolator = DecelerateInterpolator()
-                animation.start()
+            //Вторая шкала "Температура по ощущениям"
+            animation = ObjectAnimator.ofInt(
+                barFeelsLike,
+                "progress",
+                0,
+                abs(currentWeatherInfo.main.feels_like.toInt()) * 100
+            )
+            animation.duration = 2000 // in milliseconds
+            animation.interpolator = DecelerateInterpolator()
+            animation.start()
 
-                mainActivity?.noNewRequest()
-            } else {
-                barMain.progress = abs(currentWeatherInfo.main.temp.toInt()) * 100
-                barFeelsLike.progress = abs(currentWeatherInfo.main.feels_like.toInt()) * 100
-            }
+            mainActivity?.noNewRequest()
+        } else {
+            barMain.progress = abs(currentWeatherInfo.main.temp.toInt()) * 100
+            barFeelsLike.progress = abs(currentWeatherInfo.main.feels_like.toInt()) * 100
+        }
     }
 }

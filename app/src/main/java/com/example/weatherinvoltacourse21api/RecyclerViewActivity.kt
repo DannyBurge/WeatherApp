@@ -10,25 +10,24 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.weatherinvoltacourse21api.databinding.ActivityCitychangeBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 
 
 class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
     private lateinit var binding: ActivityCitychangeBinding
-    private lateinit var adapter: FavouriteCitiesRecyclerAdapter
+    private lateinit var adapterFav: FavouriteCitiesRecyclerAdapter
+    private lateinit var adapterCit: CitiesRecyclerAdapter
 
     private var citiesArray: MutableList<City> = ArrayList()
     private val favouriteCitiesArray = MutableLiveData<MutableList<City>>()
+    private var filteredCities: MutableList<City>? = null
+
     fun getFavouriteList(): LiveData<MutableList<City>> {
         return favouriteCitiesArray
     }
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_citychange)
 
@@ -71,8 +70,10 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
     private fun initRecycler() {
         //устанавливаем наш адаптер в качестве адаптера для нашего RecyclerView,
         // попутно подавая в него обработчик событий клика
-        adapter = FavouriteCitiesRecyclerAdapter(this, favouriteCitiesArray, this)
-        binding.listFavouriteCitiesRecView.adapter = adapter
+        adapterFav = FavouriteCitiesRecyclerAdapter(this, favouriteCitiesArray, this)
+        adapterCit = CitiesRecyclerAdapter(this, filteredCities, adapterFav, this)
+        binding.listFavouriteCitiesRecView.adapter = adapterFav
+        binding.listCitiesRecView.adapter = adapterCit
     }
 
 
@@ -87,17 +88,17 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
     }
 
     private fun updateCityView(filter: String) {
-        var filteredCities: MutableList<City>? = null
-        if (filter.isNotEmpty()) {
-            filteredCities = citiesArray.filter { city ->
+
+        filteredCities = if (filter.isNotEmpty()) {
+            citiesArray.filter { city ->
                 city.city.startsWith(
                     filter,
                     ignoreCase = true
                 )
             } as MutableList<City>
-        }
+        } else null
         binding.listCitiesRecView.adapter =
-            filteredCities?.let { CitiesRecyclerAdapter(this, it, adapter, this) }
+            filteredCities?.let { CitiesRecyclerAdapter(this, it, adapterFav, this) }
     }
 
     override fun onCellClickListener(data: City) {

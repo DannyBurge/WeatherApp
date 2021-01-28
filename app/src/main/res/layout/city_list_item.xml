@@ -48,7 +48,7 @@
         android:id="@+id/addToFavs"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:background="@drawable/baseline_highlight_off_black_24dp"
+        android:background="@drawable/button_add_remove_to_favourite"
         android:rotation="45"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -39,9 +39,9 @@
                 app:layout_constraintStart_toEndOf="@+id/cityName" />
 
             <ProgressBar
-                android:id="@+id/tempHot"
+                android:id="@+id/barOutRed"
                 style="@style/myCircularBar"
-                android:progressDrawable="@drawable/circular_main_weather_bar"
+                android:progressDrawable="@drawable/bar_outer_red"
                 android:rotationY="180"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -49,33 +49,32 @@
                 app:layout_constraintTop_toBottomOf="@+id/cityName" />
 
             <ProgressBar
-                android:id="@+id/tempCold"
+                android:id="@+id/barOutBlue"
                 style="@style/myCircularBar"
-                android:progressDrawable="@drawable/circular_main_revert_weather_bar"
-                app:layout_constraintBottom_toBottomOf="@+id/tempHot"
-                app:layout_constraintEnd_toEndOf="@+id/tempHot"
-                app:layout_constraintStart_toStartOf="@+id/tempHot"
-                app:layout_constraintTop_toTopOf="@+id/tempHot" />
+                android:progressDrawable="@drawable/bar_outer_blue"
+                app:layout_constraintBottom_toBottomOf="@+id/barOutRed"
+                app:layout_constraintEnd_toEndOf="@+id/barOutRed"
+                app:layout_constraintStart_toStartOf="@+id/barOutRed"
+                app:layout_constraintTop_toTopOf="@+id/barOutRed" />
 
             <ProgressBar
-                android:id="@+id/tempFeelsLikeBar"
+                android:id="@+id/barInRed"
                 style="@style/myCircularBar"
-                android:progressDrawable="@drawable/circular_feelslike_weather_bar"
+                android:progressDrawable="@drawable/bar_inner_red"
                 android:rotationY="180"
-                app:layout_constraintBottom_toBottomOf="@+id/tempHot"
-                app:layout_constraintEnd_toEndOf="@+id/tempHot"
-                app:layout_constraintStart_toStartOf="@+id/tempHot"
-                app:layout_constraintTop_toTopOf="@+id/tempHot" />
+                app:layout_constraintBottom_toBottomOf="@+id/barOutRed"
+                app:layout_constraintEnd_toEndOf="@+id/barOutRed"
+                app:layout_constraintStart_toStartOf="@+id/barOutRed"
+                app:layout_constraintTop_toTopOf="@+id/barOutRed" />
 
             <ProgressBar
-                android:id="@+id/tempColdFeelsLikeBar"
+                android:id="@+id/barInBlue"
                 style="@style/myCircularBar"
-                android:progressDrawable="@drawable/circular_feelslike_revert_weather_bar"
-                android:rotation="90"
-                app:layout_constraintBottom_toBottomOf="@+id/tempHot"
-                app:layout_constraintEnd_toEndOf="@+id/tempHot"
-                app:layout_constraintStart_toStartOf="@+id/tempHot"
-                app:layout_constraintTop_toTopOf="@+id/tempHot" />
+                android:progressDrawable="@drawable/bar_inner_blue"
+                app:layout_constraintBottom_toBottomOf="@+id/barOutRed"
+                app:layout_constraintEnd_toEndOf="@+id/barOutRed"
+                app:layout_constraintStart_toStartOf="@+id/barOutRed"
+                app:layout_constraintTop_toTopOf="@+id/barOutRed" />
 
             <TextView
                 android:id="@+id/mainWeather"
@@ -98,7 +97,7 @@
                 android:layout_gravity="center"
                 android:text="-10°C"
                 android:textSize="80sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tempHot"
+                app:layout_constraintBottom_toBottomOf="@+id/barOutRed"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"

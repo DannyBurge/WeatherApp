@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 //добавляем на вход обработчик событий
 class CitiesRecyclerAdapter(
     context: Context,
-    private val cities: MutableList<City>,
-    private val favouriteCitiesAdapter: FavouriteCitiesRecyclerAdapter,
-
-//    var prefs: SharedPreferences,
+    private val cities: MutableList<City>?,
+    favouriteCitiesAdapter: FavouriteCitiesRecyclerAdapter,
     private val cellClickListener: CellClickListener
 ) :
     RecyclerView.Adapter<CitiesRecyclerAdapter.ViewHolder>() {
@@ -34,16 +32,16 @@ class CitiesRecyclerAdapter(
 
     //Задаем значения для элемента списка
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(cities[position])
+        cities?.get(position)?.let { holder.bind(it) }
 
         holder.itemView.setOnClickListener {
-            cellClickListener.onCellClickListener(cities[position])
+            cities?.get(position)?.let { it1 -> cellClickListener.onCellClickListener(it1) }
         }
     }
 
     //Получаем количество элементов в списке
     override fun getItemCount(): Int {
-        return cities.size
+        return cities?.size ?: 0
     }
 
     inner class ViewHolder constructor(view: View) : RecyclerView.ViewHolder(view) {
