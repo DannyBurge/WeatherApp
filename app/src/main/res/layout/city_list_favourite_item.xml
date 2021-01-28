@@ -4,26 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="2dp"
-    android:background="@color/white"
-    android:elevation="2dp"
-    android:padding="4dp">
+    style="@style/myCardStyle">
 
     <ImageView
         android:id="@+id/imageBG"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/letter_bg"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        style="@style/icon" />
 
     <TextView
         android:id="@+id/item_cityLetter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="C"
-        android:textSize="24sp"
+        android:textSize="@dimen/fontSizeBig"
         app:layout_constraintBottom_toBottomOf="@+id/imageBG"
         app:layout_constraintEnd_toEndOf="@+id/imageBG"
         app:layout_constraintStart_toStartOf="@+id/imageBG"
@@ -34,9 +26,9 @@
         android:id="@+id/item_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_marginLeft="@dimen/marginMainSmall"
         android:text="City"
-        android:textSize="18sp"
+        android:textSize="@dimen/fontSize"
         app:layout_constraintBottom_toBottomOf="@+id/imageBG"
         app:layout_constraintStart_toEndOf="@+id/imageBG"
         app:layout_constraintTop_toBottomOf="@+id/item_country" />
@@ -46,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Country"
-        android:textSize="12sp"
+        android:textSize="@dimen/fontSizeSmall"
         app:layout_constraintBottom_toTopOf="@+id/item_city"
         app:layout_constraintStart_toStartOf="@+id/item_city"
         app:layout_constraintTop_toTopOf="@+id/imageBG"
@@ -56,20 +48,19 @@
         android:id="@+id/favouriteItem"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/marginMainSmall"
         android:button="@drawable/custom_checkbox"
-        app:layout_constraintBottom_toBottomOf="@+id/imageBG"
+        app:layout_constraintBottom_toBottomOf="@+id/removeItem"
         app:layout_constraintEnd_toStartOf="@+id/removeItem"
-        app:layout_constraintTop_toTopOf="@+id/imageBG"
-        app:layout_constraintVertical_bias="0.48" />
+        app:layout_constraintTop_toTopOf="@+id/removeItem"/>
 
     <Button
         android:id="@+id/removeItem"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:background="@drawable/baseline_highlight_off_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageBG"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageBG" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

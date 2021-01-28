@@ -2,11 +2,14 @@ package com.example.weatherinvoltacourse21api
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,15 +26,29 @@ import com.example.weatherinvoltacourse21api.ui.onWeekly.OnWeeklyFragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.io.Serializable
 
 
 class MainActivity : AppCompatActivity() {
+    private var cityName: String? = null
+
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
 
     lateinit var binding: ActivityMainBinding
+
+    lateinit var retrofit: Retrofit
+    lateinit var weatherInfoAPI: WeatherInfoAPI
+
+    lateinit var dialog: AlertDialog.Builder
+    var isDialogShowing = false
 
     private val newRequest = MutableLiveData<Boolean>()
     fun isNewRequest(): LiveData<Boolean> {
@@ -42,19 +59,19 @@ class MainActivity : AppCompatActivity() {
         newRequest.value = false
     }
 
-    private val weatherCurrentInfoJSON = MutableLiveData<String>()
-    fun getCurrentInfo(): LiveData<String> {
-        return weatherCurrentInfoJSON
+    private var weatherCurrentInfo = MutableLiveData<CurrentWeatherData>()
+    fun getCurrentInfo(): LiveData<CurrentWeatherData> {
+        return weatherCurrentInfo
     }
 
-    private val weatherHourlyInfoJSON = MutableLiveData<String>()
-    fun getHourlyInfo(): LiveData<String> {
-        return weatherHourlyInfoJSON
+    private var weatherHourlyInfo = MutableLiveData<List<HourWeatherData>>()
+    fun getHourlyInfo(): LiveData<List<HourWeatherData>> {
+        return weatherHourlyInfo
     }
 
-    private val weatherWeeklyInfoJSON = MutableLiveData<String>()
-    fun getWeeklyInfo(): LiveData<String> {
-        return weatherWeeklyInfoJSON
+    private var weatherWeeklyInfo = MutableLiveData<List<DayWeatherData>>()
+    fun getWeeklyInfo(): LiveData<List<DayWeatherData>> {
+        return weatherWeeklyInfo
     }
 
     private fun checkIfThereIsFavouriteCity() {
@@ -67,40 +84,76 @@ class MainActivity : AppCompatActivity() {
                 if (cityInfo[4].toBoolean()) {
                     if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
                         getLastKnownLocation()
-                    } else requestWeather("lat=${cityInfo[3]}&lon=${cityInfo[2]}")
+                    } else requestWeather(
+                        floatArrayOf(
+                            cityInfo[3].toFloat(),
+                            cityInfo[2].toFloat()
+                        )
+                    )
                 }
             }
         }
     }
 
+    override fun onCreateDialog(id: Int): Dialog {
+        isDialogShowing = true
+        return super.onCreateDialog(id)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
+        outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
+        outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
+        outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
+        Timber.i("onSaveInstanceState Called")
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.containerSecond.visibility = View.INVISIBLE
-        binding.viewPager.visibility = View.INVISIBLE
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-        if (!isLocationGranted()) {
-            getLocalPermissions()
-        } else checkIfThereIsFavouriteCity()
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                if (locationRequest == null) {
-                    return
-                }
-            }
-        }
-
-        binding.tryAgainButton.setOnClickListener {
+        dialog = AlertDialog.Builder(this)
+        dialog.setMessage(resources.getString(R.string.InternetIssue))
+        dialog.setPositiveButton("Retry") { _, _ ->
+            isDialogShowing = false
             if (!isLocationGranted()) {
                 getLocalPermissions()
             } else checkIfThereIsFavouriteCity()
         }
+        dialog.create()
 
-        binding.buttonLocationCity.setOnClickListener {
-            val intent = Intent(this, RecyclerViewActivity::class.java)
-            startActivityForResult(intent, 1)
+        retrofit = Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        weatherInfoAPI = retrofit.create(WeatherInfoAPI::class.java)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+
+        if (savedInstanceState != null) {
+            weatherCurrentInfo.value = savedInstanceState.getParcelable("CurrentWeatherData")
+            weatherHourlyInfo.value =
+                savedInstanceState.getSerializable("HourWeatherData") as List<HourWeatherData>
+            weatherWeeklyInfo.value =
+                savedInstanceState.getSerializable("DayWeatherData") as List<DayWeatherData>
+
+            savedInstanceState.clear()
+
+            binding.loadingProgressBar.hide()
+            binding.viewPager.visibility = View.VISIBLE
+        } else {
+            binding.viewPager.visibility = View.INVISIBLE
+
+            if (!isLocationGranted()) {
+                getLocalPermissions()
+            } else checkIfThereIsFavouriteCity()
+
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {}
+            }
         }
 
         binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
@@ -163,12 +216,13 @@ class MainActivity : AppCompatActivity() {
         if (data == null) {
             return
         } else {
-            val location = data.getStringExtra("Location")
+            val location = data.getFloatArrayExtra("Location")
+            cityName = data.getStringExtra("CityName")
             if (location != null) {
-                if (location == "lat=0.0&lon=0.0") {
+                if ((location[0] == 0f) and (location[1] == 0f)) {
                     getLastKnownLocation()
                 } else {
-                    requestWeather("$location")
+                    requestWeather(location)
                 }
             } else {
                 if (resultCode == 0) {
@@ -203,9 +257,13 @@ class MainActivity : AppCompatActivity() {
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
 
         locationProvider?.lastLocation?.addOnSuccessListener { location ->
-
             if (location != null) {
-                requestWeather("lat=${location.latitude}&lon=${location.longitude}")
+                requestWeather(
+                    floatArrayOf(
+                        location.latitude.toFloat(),
+                        location.longitude.toFloat()
+                    )
+                )
             }
         }
 
@@ -273,63 +331,59 @@ class MainActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED))
     }
 
-    private fun requestWeather(location: String) {
-        val isLoading = arrayOf(true, true, true)
+    private fun requestWeather(location: FloatArray) {
+        val isLoading = arrayOf(true, true)
         binding.loadingProgressBar.show()
-        binding.buttonLocationCity.visibility = View.GONE
-        binding.containerSecond.visibility = View.GONE
 
         newRequest.postValue(true)
-        val keyAPI = "3b5683c272c1dfb381272ff1d030cad3"
-        GlobalScope.launch {
-            weatherCurrentInfoJSON.postValue(
-                makeRequest(
-                    ("https://api.openweathermap.org/data/2.5/weather?"
-                            + location) +
-                            "&units=metric&appid=${keyAPI}"
-                )
-            )
-            isLoading[0] = false
-        }
-        GlobalScope.launch {
-            weatherHourlyInfoJSON.postValue(
-                makeRequest(
-                    "https://api.openweathermap.org/data/2.5/onecall?"
-                            + location +
-                            "&exclude=current,minutely,daily,alerts&units=metric&appid=${keyAPI}"
-                )
-            )
-            isLoading[1] = false
-        }
-        GlobalScope.launch {
-            weatherWeeklyInfoJSON.postValue(
-                makeRequest(
-                    "https://api.openweathermap.org/data/2.5/onecall?"
-                            + location +
-                            "&exclude=current,minutely,hourly,alerts&units=metric&appid=${keyAPI}"
-                )
-            )
-            isLoading[2] = false
-        }
-        GlobalScope.launch {
-            while (true) {
-                if (!isLoading[0] and !isLoading[1] and !isLoading[2]) {
-                    break
+
+        weatherInfoAPI.getCurrentWeatherInfo(location[0], location[1])
+            ?.enqueue(object : Callback<CurrentWeatherData?> {
+                override fun onFailure(call: Call<CurrentWeatherData?>, t: Throwable) {
+                    if (!isDialogShowing) dialog.show()
+                    binding.loadingProgressBar.hide()
+
                 }
-                delay(300)
-            }
-            withContext(Dispatchers.Main) {
-                binding.loadingProgressBar.hide()
-                if (!(weatherCurrentInfoJSON.value + weatherHourlyInfoJSON.value + weatherWeeklyInfoJSON.value).contains(
-                        Regex("timeout|Unable")
-                    )
+
+                override fun onResponse(
+                    call: Call<CurrentWeatherData?>,
+                    response: Response<CurrentWeatherData?>
                 ) {
-                    binding.viewPager.visibility = View.VISIBLE
-                    binding.buttonLocationCity.visibility = View.VISIBLE
-                    binding.containerSecond.visibility = View.GONE
-                } else {
-                    binding.viewPager.visibility = View.INVISIBLE
-                    binding.containerSecond.visibility = View.VISIBLE
+                    if (response.code() == 200) {
+                        weatherCurrentInfo.postValue(response.body()!!)
+                        isLoading[0] = false
+                    } else dialog.show()
+                }
+            })
+
+        weatherInfoAPI.getHourlyDailyWeatherInfo(location[0], location[1])
+            ?.enqueue(object : Callback<OneCallWeatherData?> {
+                override fun onFailure(call: Call<OneCallWeatherData?>, t: Throwable) {
+                    if (!isDialogShowing) dialog.show()
+                    binding.loadingProgressBar.hide()
+                }
+
+                override fun onResponse(
+                    call: Call<OneCallWeatherData?>,
+                    response: Response<OneCallWeatherData?>
+                ) {
+                    if (response.code() == 200) {
+                        weatherHourlyInfo.postValue(response.body()!!.hourly)
+                        weatherWeeklyInfo.postValue(response.body()!!.daily)
+                        isLoading[1] = false
+                    } else dialog.show()
+                }
+            })
+
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                while (true) {
+                    if (!isLoading[0] and !isLoading[1]) {
+                        binding.loadingProgressBar.hide()
+                        binding.viewPager.visibility = View.VISIBLE
+                        break
+                    }
+                    delay(300)
                 }
             }
         }

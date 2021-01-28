@@ -2,15 +2,21 @@
     <!-- Base application theme. -->
     <style name="WeatherApp" parent="AppTheme">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimary">@color/allTextColor</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondary">@color/material_purple_300</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:windowLightStatusBar">false</item>
     </style>
+    <!-- Theme Colors. -->
+    <color name="bottomBarMenuColor">@color/material_gray_700</color>
+    <color name="cardBackground">@color/semi_clear_white</color>
+    <color name="cardPicBackground">@color/semi_clear_white</color>
+    <color name="allTextColor">@color/myGray</color>
+
+    <color name="backgroundTempBar">@color/material_gray_700</color>
+
+    <color name="mainBGStart">@color/material_gray_700</color>
+    <color name="mainBGEnd">@color/material_purple_700</color>
+
 </resources>

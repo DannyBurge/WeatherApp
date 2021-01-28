@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item
         android:id="@+id/navigation_onHourlyFragment"
-        android:icon="@drawable/hourly_24dp"
+        android:icon="@drawable/custom_menu_item_hour"
         android:title="@string/title_weatherHourly"
-        android:titleCondensed="@string/title_weatherHourly"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_onWeatherFragment"
-        android:icon="@drawable/sunny_24dp"
+        android:icon="@drawable/custom_menu_item_current"
         android:title="@string/title_weatherNow"
-        android:titleCondensed="@string/title_weatherNow"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/navigation_onWeeklyFragment"
-        android:icon="@drawable/weekly_24dp"
+        android:icon="@drawable/custom_menu_item_week"
         android:title="@string/title_weatherWeekly"
-        android:titleCondensed="@string/title_weatherWeekly"
         app:showAsAction="ifRoom" />
 </menu>

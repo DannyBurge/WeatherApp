@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:innerRadiusRatio="@dimen/innerRadiusRatioOuter"
+    android:innerRadius="@dimen/innerRadiusOuter"
     android:shape="ring"
     android:thicknessRatio="@dimen/thickRation"
     android:useLevel="true">
 
     <gradient
-        android:centerColor="#000082"
+        android:centerColor="@color/mainTempColdBar"
         android:endColor="@color/black"
         android:startColor="@color/clear"
         android:type="sweep" />

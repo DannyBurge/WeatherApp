@@ -7,25 +7,36 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="3dp"
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            android:padding="16dp">
+            android:layout_height="400dp"
+            android:layout_gravity="center"
+            android:layout_weight="10">
 
             <TextView
                 android:id="@+id/cityName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginStart="@dimen/marginMain"
                 android:gravity="center"
                 android:text="@string/city_name"
                 android:textSize="36sp"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/buttonLocationCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/marginMain"
+                android:text="Change"
+                android:textSize="16sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/cityName"
+                app:layout_constraintStart_toEndOf="@+id/cityName" />
 
             <ProgressBar
                 android:id="@+id/tempHot"
@@ -48,7 +59,7 @@
 
             <ProgressBar
                 android:id="@+id/tempFeelsLikeBar"
-                style="@style/myCircularBar.Inner"
+                style="@style/myCircularBar"
                 android:progressDrawable="@drawable/circular_feelslike_weather_bar"
                 android:rotationY="180"
                 app:layout_constraintBottom_toBottomOf="@+id/tempHot"
@@ -58,7 +69,7 @@
 
             <ProgressBar
                 android:id="@+id/tempColdFeelsLikeBar"
-                style="@style/myCircularBar.Inner"
+                style="@style/myCircularBar"
                 android:progressDrawable="@drawable/circular_feelslike_revert_weather_bar"
                 android:rotation="90"
                 app:layout_constraintBottom_toBottomOf="@+id/tempHot"
@@ -100,30 +111,132 @@
                 android:layout_gravity="center"
                 android:text="Feels like: 0°C"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/tempMain"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tempMain" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/myCardStyle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="7">
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/marginMain"
+                android:text="Sunrise at:"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toTopOf="@+id/sunRise"
+                app:layout_constraintEnd_toStartOf="@+id/view3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/marginMain"
+                android:text="Sunset at:"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toTopOf="@+id/sunSet"
+                app:layout_constraintStart_toEndOf="@+id/view3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/sunSet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="00:00"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textViewTemp2"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp2" />
+
+            <View
+                android:id="@+id/view3"
+                style="@style/myDividerStyle" />
+
+            <ImageView
+                android:id="@+id/daySunsetIcon"
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/sunset" />
+
+            <ImageView
+                android:id="@+id/daySunriseIcon"
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/sunrise" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sunRise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textViewTemp"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/myCardStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/marginMain"
+                android:text="Maximum:"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/tempMax"
+                app:layout_constraintEnd_toStartOf="@+id/view4"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/marginMain"
+                android:text="Minimum:"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/tempMin"
+                app:layout_constraintStart_toEndOf="@+id/view4"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <View
+                android:id="@+id/view4"
+                style="@style/myDividerStyle" />
+
+            <ImageView
+                android:id="@+id/tempMaxIcon"
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/temp_up" />
+
+            <ImageView
+                android:id="@+id/tempMinIcon"
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/temp_down" />
+
 
             <TextView
                 android:id="@+id/tempMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:gravity="center"
-                android:text="Temp min: 0°C"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/tempMax"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="spread"
-                tools:ignore="MissingConstraints" />
+                android:text="0°C"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textViewTemp5"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp5" />
 
             <TextView
                 android:id="@+id/tempMax"
@@ -131,126 +244,149 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Temp max: 0°C"
-                android:textSize="16sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/tempMin"
-                app:layout_constraintEnd_toStartOf="@+id/tempMin"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:text="0°C"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textViewTemp4"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp4" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            style="@style/myCardStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
-            <TextView
-                android:id="@+id/sunRise"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="00:00"
-                android:textSize="16sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/sunSet"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/sunSet" />
-
-            <TextView
-                android:id="@+id/sunSet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="00:00"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@+id/sunRise"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/tempMax"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tempMax" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wind:"
-                android:textSize="16dp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
-                app:layout_constraintEnd_toEndOf="@+id/sunRise"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/sunRise" />
-
-            <TextView
-                android:id="@+id/windInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10 m/s"
-                android:textSize="30dp"
-                app:layout_constraintEnd_toEndOf="@+id/textView"
-                app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/marginMain"
                 android:text="Humidity:"
-                android:textSize="16dp"
-                app:layout_constraintEnd_toEndOf="@+id/sunSet"
-                app:layout_constraintHorizontal_bias="0.586"
-                app:layout_constraintStart_toStartOf="@+id/sunSet"
-                app:layout_constraintTop_toBottomOf="@+id/sunSet" />
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/humidityInfo"
+                app:layout_constraintEnd_toStartOf="@+id/view5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/marginMain"
+                android:text="Wind:"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/windInfo"
+                app:layout_constraintStart_toEndOf="@+id/view5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+
+            <View
+                android:id="@+id/view5"
+                style="@style/myDividerStyle" />
+
+            <ImageView
+                android:id="@+id/humidityIcon"
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/wet" />
+
+            <ImageView
+                android:id="@+id/windIcon"
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/wind" />
 
             <TextView
                 android:id="@+id/humidityInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="80 %"
-                android:textSize="30dp"
-                app:layout_constraintEnd_toEndOf="@+id/textView2"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textViewTemp6"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp6" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/windInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="10 m/s"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textViewTemp7"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp7" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/myCardStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/marginMain"
+                android:text="Pressure:"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/pressureInfo"
+                app:layout_constraintEnd_toStartOf="@+id/view6"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textViewTemp9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/marginMain"
                 android:text="Visibility:"
-                android:textSize="16dp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
-                app:layout_constraintEnd_toEndOf="@+id/windInfo"
-                app:layout_constraintStart_toStartOf="@+id/windInfo" />
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/visibilityInfo"
+                app:layout_constraintStart_toEndOf="@+id/view6"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+
+            <View
+                android:id="@+id/view6"
+                style="@style/myDividerStyle" />
+
+            <ImageView
+                android:id="@+id/pressureIcon"
+                style="@style/weatherIcon.Left"
+                android:src="@mipmap/pressure" />
+
+            <ImageView
+                android:id="@+id/visibilityIcon"
+                style="@style/weatherIcon.Right"
+                android:src="@mipmap/visibility" />
+
+            <TextView
+                android:id="@+id/pressureInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="800 mmHg"
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textViewTemp8"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp8" />
 
             <TextView
                 android:id="@+id/visibilityInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10 km"
-                android:textSize="30dp"
-                app:layout_constraintEnd_toEndOf="@+id/textView3"
-                app:layout_constraintStart_toStartOf="@+id/textView3"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                android:textSize="@dimen/fontSizeSmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textViewTemp9"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTemp9" />
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pressure:"
-                android:textSize="16dp"
-                app:layout_constraintEnd_toEndOf="@+id/humidityInfo"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/humidityInfo"
-                app:layout_constraintTop_toBottomOf="@+id/humidityInfo" />
-
-            <TextView
-                android:id="@+id/pressureInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="800 mm hg"
-                android:textSize="30dp"
-                app:layout_constraintEnd_toEndOf="@+id/textView4"
-                app:layout_constraintStart_toStartOf="@+id/textView4"
-                app:layout_constraintTop_toBottomOf="@+id/textView4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </layout>

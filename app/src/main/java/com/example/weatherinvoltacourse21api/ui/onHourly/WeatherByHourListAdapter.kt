@@ -11,7 +11,7 @@ import com.example.weatherinvoltacourse21api.R
 
 class WeatherByHourListAdapter(
     context: Context,
-    private val weatherByHour: MutableList<WeatherByHour>
+    private val weatherByHour: MutableList<WeatherByHourForAdapter>
 ) :
     RecyclerView.Adapter<WeatherByHourListAdapter.ViewHolder>() {
     private val inflater = LayoutInflater.from(context)
@@ -36,26 +36,26 @@ class WeatherByHourListAdapter(
         private val timeHourlyView: TextView = view.findViewById(R.id.dateDay)
         private val mainTempHourlyView: TextView = view.findViewById(R.id.mainTempDay)
         private val feelsLikeTempHourlyView: TextView = view.findViewById(R.id.mainTempNight)
-        private val mainWeatherHourlyView: ImageView = view.findViewById(R.id.dayWeatherInfoIcon)
+        private val icon: ImageView = view.findViewById(R.id.hourWeatherInfoIcon)
         private val hourWeatherInfoDescription: TextView = view.findViewById(R.id.dayWeatherInfoDescription)
 
-        fun bind(weatherInfoByHour: WeatherByHour) {
+        fun bind(weatherInfoByHour: WeatherByHourForAdapter) {
             timeHourlyView.text = weatherInfoByHour.time
             mainTempHourlyView.text = weatherInfoByHour.mainTemp
             feelsLikeTempHourlyView.text = weatherInfoByHour.feelsLikeTemp
             hourWeatherInfoDescription.text = weatherInfoByHour.description
-            when(weatherInfoByHour.idWeather[0]) {
-                '2' -> mainWeatherHourlyView.setImageResource(R.mipmap.storm)
-                '3' -> mainWeatherHourlyView.setImageResource(R.mipmap.wet)
-                '5' -> mainWeatherHourlyView.setImageResource(R.mipmap.rain)
-                '6' -> mainWeatherHourlyView.setImageResource(R.mipmap.snow)
-                '7' -> mainWeatherHourlyView.setImageResource(R.mipmap.dry)
-                '8' -> when(weatherInfoByHour.idWeather[2]) {
-                    '0' -> mainWeatherHourlyView.setImageResource(R.mipmap.sun)
-                    '1' -> mainWeatherHourlyView.setImageResource(R.mipmap.sun_cloud)
-                    '2' -> mainWeatherHourlyView.setImageResource(R.mipmap.cloud)
-                    '3' -> mainWeatherHourlyView.setImageResource(R.mipmap.clouds)
-                    '4' -> mainWeatherHourlyView.setImageResource(R.mipmap.clouds)
+            when(weatherInfoByHour.idWeather/100) {
+                2 -> icon.setImageResource(R.mipmap.storm)
+                3 -> icon.setImageResource(R.mipmap.wet)
+                5 -> icon.setImageResource(R.mipmap.rain)
+                6 -> icon.setImageResource(R.mipmap.snow)
+                7 -> icon.setImageResource(R.mipmap.dry)
+                8 -> when(weatherInfoByHour.idWeather%100) {
+                    0 -> icon.setImageResource(R.mipmap.sun)
+                    1 -> icon.setImageResource(R.mipmap.sun_cloud)
+                    2 -> icon.setImageResource(R.mipmap.cloud)
+                    3 -> icon.setImageResource(R.mipmap.clouds)
+                    4 -> icon.setImageResource(R.mipmap.clouds)
                 }
 
             }

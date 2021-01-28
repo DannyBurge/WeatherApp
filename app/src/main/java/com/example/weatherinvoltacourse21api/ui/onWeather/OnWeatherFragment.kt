@@ -2,6 +2,7 @@ package com.example.weatherinvoltacourse21api.ui.onWeather
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,13 +12,13 @@ import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.observe
+import com.example.weatherinvoltacourse21api.CurrentWeatherData
 import com.example.weatherinvoltacourse21api.MainActivity
 import com.example.weatherinvoltacourse21api.R
+import com.example.weatherinvoltacourse21api.RecyclerViewActivity
 import com.example.weatherinvoltacourse21api.databinding.FragmentWeatherBinding
-import org.json.JSONArray
-import org.json.JSONObject
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 
 class OnWeatherFragment : Fragment(){
@@ -34,21 +35,28 @@ class OnWeatherFragment : Fragment(){
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_weather, container, false)
         mainActivity = activity as MainActivity?
         binding.root.visibility = View.INVISIBLE
+
+
+        binding.buttonLocationCity.setOnClickListener {
+            val intent = Intent(mainActivity, RecyclerViewActivity::class.java)
+            startActivityForResult(intent, 1)
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val liveData: LiveData<String>? = mainActivity?.getCurrentInfo()
-        liveData?.observe(viewLifecycleOwner, {
+        val liveData: LiveData<CurrentWeatherData>? = mainActivity?.getCurrentInfo()
+        liveData?.observe(viewLifecycleOwner) {
             binding.root.visibility = View.VISIBLE
-            parseJsonSetText(it)
-        })
+            setText(it)
+        }
 
         val isNewRequest: LiveData<Boolean>? = mainActivity?.isNewRequest()
-        isNewRequest?.observe(viewLifecycleOwner, {
+        isNewRequest?.observe(viewLifecycleOwner) {
             doAnimation = it
-        })
+        }
     }
 
     override fun onResume() {
@@ -57,57 +65,28 @@ class OnWeatherFragment : Fragment(){
     }
 
     @SuppressLint("SetTextI18n")
-    fun parseJsonSetText(result: String) {
-        if ((!result.contains("Unable", ignoreCase = true)) and (!result.contains("timeout", ignoreCase = true))) {
-            val jsonResult = JSONObject(result)
-            val cityName = jsonResult["name"]
-
-            val jsonMain = jsonResult["main"].toString()
-            val jsonSys = jsonResult["sys"].toString()
-            val jsonWeather = (jsonResult["weather"] as JSONArray).getJSONObject(0)
-            val sunrise = JSONObject(jsonSys)["sunrise"].toString().toFloat().toLong()
-            val sunset = JSONObject(jsonSys)["sunset"].toString().toFloat().toLong()
-
-            val temp = JSONObject(jsonMain)["temp"].toString().toFloat().roundToInt()
-            val tempMin = JSONObject(jsonMain)["temp_min"].toString().toFloat().roundToInt()
-            val tempMax = JSONObject(jsonMain)["temp_max"].toString().toFloat().roundToInt()
-            val weatherInfo = jsonWeather["main"]
-
-            val tempFeelsLike =
-                JSONObject(jsonResult["main"].toString())["feels_like"].toString()
-                    .toFloat().roundToInt()
-
-            val windInfo = jsonResult["wind"].toString()
-            val windSpeed = JSONObject(windInfo)["speed"]
-
-            val visibility = (jsonResult["visibility"].toString().toFloat() / 1000).toInt()
-            val humidity = JSONObject(jsonMain)["humidity"]
-            val pressure =
-                (JSONObject(jsonMain)["pressure"].toString().toFloat() * 0.75).toInt()
-
+    fun setText(currentWeatherInfo: CurrentWeatherData) {
             val sdf = java.text.SimpleDateFormat("HH:mm")
-            val sunriseTime = java.util.Date(sunrise * 1000)
-            val sunsetTime = java.util.Date(sunset * 1000)
 
-            binding.cityName.text = "$cityName"
+            binding.cityName.text = currentWeatherInfo.name
 
-            binding.tempMain.text = "${temp}°C"
-            binding.tempMax.text = "Max temperature: ${tempMax}°C"
-            binding.tempMin.text = "Min temperature: ${tempMin}°C"
-            binding.tempFeelsLike.text = "Feels Like: ${tempFeelsLike}°C"
+            binding.tempMain.text = "${currentWeatherInfo.main.temp.toInt()}°C"
+            binding.tempMax.text = "${currentWeatherInfo.main.temp_max.toInt()}°C"
+            binding.tempMin.text = "${currentWeatherInfo.main.temp_min.toInt()}°C"
+            binding.tempFeelsLike.text = "Feels Like: ${currentWeatherInfo.main.feels_like.toInt()}°C"
 
-            binding.mainWeather.text = "${weatherInfo}"
-            binding.sunRise.text = sdf.format(sunriseTime)
-            binding.sunSet.text = sdf.format(sunsetTime)
-            binding.windInfo.text = "${windSpeed} m/s"
-            binding.humidityInfo.text = "${humidity} %"
-            binding.visibilityInfo.text = "${visibility} km"
-            binding.pressureInfo.text = "${pressure} mm Hg"
+            binding.mainWeather.text = currentWeatherInfo.weather[0].description
+            binding.sunRise.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunrise * 1000))
+            binding.sunSet.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunset * 1000))
+            binding.windInfo.text = "${currentWeatherInfo.wind.speed} m/s"
+            binding.humidityInfo.text = "${currentWeatherInfo.main.humidity} %"
+            binding.visibilityInfo.text = "${(currentWeatherInfo.visibility/1000).toInt()} km"
+            binding.pressureInfo.text = "${currentWeatherInfo.main.pressure} mmHg"
 
             val barMain: ProgressBar
             val barFeelsLike: ProgressBar
 
-            if (temp < 0) {
+            if (currentWeatherInfo.main.temp < 0) {
                 barMain = binding.tempCold
                 barFeelsLike = binding.tempColdFeelsLikeBar
                 binding.tempHot.visibility = View.INVISIBLE
@@ -129,7 +108,7 @@ class OnWeatherFragment : Fragment(){
                     barMain,
                     "progress",
                     0,
-                    abs(temp) * 100,
+                    abs(currentWeatherInfo.main.temp.toInt()) * 100,
                 ) // see this max value coming back here, we animate towards that value
                 animation.duration = 1500 // in milliseconds
                 animation.interpolator = DecelerateInterpolator()
@@ -140,33 +119,16 @@ class OnWeatherFragment : Fragment(){
                     barFeelsLike,
                     "progress",
                     0,
-                    abs(tempFeelsLike) * 100
+                    abs(currentWeatherInfo.main.feels_like.toInt()) * 100
                 )
                 animation.duration = 1500 // in milliseconds
                 animation.interpolator = DecelerateInterpolator()
                 animation.start()
-//
-//                //Третья шкала "От заката до рассвета"
-//                animation = ObjectAnimator.ofInt(
-//                    binding.dayDurationBar,
-//                    "progress",
-//                    0,
-//                    abs(tempFeelsLike) * 100
-//                )
-//                animation.duration = 2000 // in milliseconds
-//                animation.interpolator = DecelerateInterpolator()
-//                animation.start()
-
-
 
                 mainActivity?.noNewRequest()
             } else {
-                barMain.progress = abs(temp) * 100
-                barFeelsLike.progress = abs(tempFeelsLike) * 100
+                barMain.progress = abs(currentWeatherInfo.main.temp.toInt()) * 100
+                barFeelsLike.progress = abs(currentWeatherInfo.main.feels_like.toInt()) * 100
             }
-        } else {
-//            findViewById<LinearLayout>(R.id.internetProblemLayout).visibility = View.VISIBLE
-        }
-
     }
 }

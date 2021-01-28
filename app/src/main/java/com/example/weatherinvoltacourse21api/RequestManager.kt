@@ -1,9 +1,7 @@
 package com.example.weatherinvoltacourse21api
 
-import android.app.Activity
-import android.widget.Toast
-import kotlinx.coroutines.*
-import org.json.JSONObject
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL

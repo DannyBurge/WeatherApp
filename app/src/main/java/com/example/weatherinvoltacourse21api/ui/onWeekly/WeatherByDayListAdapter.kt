@@ -11,7 +11,7 @@ import com.example.weatherinvoltacourse21api.R
 
 class WeatherByDayListAdapter(
     context: Context,
-    private val weatherByHour: MutableList<WeatherByDay>
+    private val weatherByHour: MutableList<WeatherByDayForAdapter>
 ) :
     RecyclerView.Adapter<WeatherByDayListAdapter.ViewHolder>() {
     private val inflater = LayoutInflater.from(context)
@@ -39,24 +39,24 @@ class WeatherByDayListAdapter(
         private val weatherMain: TextView = view.findViewById(R.id.dayWeatherInfoDescription)
         private val icon: ImageView = view.findViewById(R.id.dayWeatherInfoIcon)
 
-        fun bind(weatherInfoByDay: WeatherByDay) {
+        fun bind(weatherInfoByDay: WeatherByDayForAdapter) {
             dateDay.text = weatherInfoByDay.date
             dayTemp.text = weatherInfoByDay.dayTemp
             nightTemp.text = weatherInfoByDay.nightTemp
             weatherMain.text = weatherInfoByDay.weatherDescription
 
-            when(weatherInfoByDay.idWeather[0]) {
-                '2' -> icon.setImageResource(R.mipmap.storm)
-                '3' -> icon.setImageResource(R.mipmap.wet)
-                '5' -> icon.setImageResource(R.mipmap.rain)
-                '6' -> icon.setImageResource(R.mipmap.snow)
-                '7' -> icon.setImageResource(R.mipmap.dry)
-                '8' -> when(weatherInfoByDay.idWeather[2]) {
-                    '0' -> icon.setImageResource(R.mipmap.sun)
-                    '1' -> icon.setImageResource(R.mipmap.sun_cloud)
-                    '2' -> icon.setImageResource(R.mipmap.cloud)
-                    '3' -> icon.setImageResource(R.mipmap.clouds)
-                    '4' -> icon.setImageResource(R.mipmap.clouds)
+            when(weatherInfoByDay.idWeather/100) {
+                2 -> icon.setImageResource(R.mipmap.storm)
+                3 -> icon.setImageResource(R.mipmap.wet)
+                5 -> icon.setImageResource(R.mipmap.rain)
+                6 -> icon.setImageResource(R.mipmap.snow)
+                7 -> icon.setImageResource(R.mipmap.dry)
+                8 -> when(weatherInfoByDay.idWeather%100) {
+                    0 -> icon.setImageResource(R.mipmap.sun)
+                    1 -> icon.setImageResource(R.mipmap.sun_cloud)
+                    2 -> icon.setImageResource(R.mipmap.cloud)
+                    3 -> icon.setImageResource(R.mipmap.clouds)
+                    4 -> icon.setImageResource(R.mipmap.clouds)
                 }
 
             }

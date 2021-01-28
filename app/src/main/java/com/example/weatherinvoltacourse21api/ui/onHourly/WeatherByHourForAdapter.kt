@@ -1,9 +1,9 @@
 package com.example.weatherinvoltacourse21api.ui.onHourly
 
-data class WeatherByHour(
+data class WeatherByHourForAdapter(
     val time: String,
     val mainTemp: String,
     val feelsLikeTemp: String,
-    val idWeather: String,
+    val idWeather: Int,
     val description: String
 )
