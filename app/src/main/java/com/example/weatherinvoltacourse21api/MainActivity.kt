@@ -18,7 +18,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
-import com.example.test_stuff.FragmentsPagerAdapter
 import com.example.weatherinvoltacourse21api.databinding.ActivityMainBinding
 import com.example.weatherinvoltacourse21api.ui.onHourly.OnHourlyFragment
 import com.example.weatherinvoltacourse21api.ui.onWeather.OnWeatherFragment
