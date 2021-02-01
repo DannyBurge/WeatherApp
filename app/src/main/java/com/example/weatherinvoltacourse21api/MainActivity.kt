@@ -94,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreateDialog(id: Int): Dialog {
         isDialogShowing = true
         return super.onCreateDialog(id)
@@ -112,7 +111,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
         dialog = AlertDialog.Builder(this)
         dialog.setMessage(resources.getString(R.string.InternetIssue))
@@ -168,7 +166,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_onWeeklyFragment -> {
                     binding.viewPager.currentItem = 2
-//                    parse2ndJsonSetText(weatherOtherInfoJSON!!)
                     true
                 }
                 else -> false
