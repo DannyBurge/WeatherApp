@@ -12,7 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 
-//Создаем класс CitiesRecyclerAdapter и наследуем его от класса RecyclerView.Adapter,
+//Создаем класс FavouriteCitiesRecyclerAdapter и наследуем его от класса RecyclerView.Adapter,
 //добавляем на вход обработчик событий
 class FavouriteCitiesRecyclerAdapter(
     context: Context,
