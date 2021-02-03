@@ -11,7 +11,6 @@ import com.example.weatherinvoltacourse21api.HourWeatherData
 import com.example.weatherinvoltacourse21api.MainActivity
 import com.example.weatherinvoltacourse21api.R
 import com.example.weatherinvoltacourse21api.databinding.FragmentHourlyBinding
-import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,7 +31,7 @@ class OnHourlyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.d("Hour View onViewCreated")
+        // Берем данные из полученного запроса и вешаем слушатель на их изменение
         val liveData: LiveData<List<HourWeatherData>>? = mainActivity?.getHourlyInfo()
         liveData?.observe(viewLifecycleOwner, {
             binding.root.visibility = View.VISIBLE
@@ -40,6 +39,8 @@ class OnHourlyFragment : Fragment() {
         })
     }
 
+    // Превращаем данные из запроса (которые были преобразованы в объекты дата классов)
+    // в список для отображения по шаблону
     private fun setText(hourlyWeatherInfo: List<HourWeatherData>) {
         val weatherInfoByHour: MutableList<WeatherByHourForAdapter> = ArrayList()
 
@@ -60,6 +61,7 @@ class OnHourlyFragment : Fragment() {
             WeatherByHourListAdapter(binding.hourlyWeatherContainer.context, weatherInfoByHour)
     }
 
+    // Округление времени до ближайшего часа
     private fun toNearestHour(date: Date): Date {
         val calendar: Calendar = GregorianCalendar()
         calendar.time = date

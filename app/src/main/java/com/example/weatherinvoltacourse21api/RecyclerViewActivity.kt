@@ -17,10 +17,10 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
     private lateinit var adapterFav: FavouriteCitiesRecyclerAdapter
     private lateinit var adapterCit: CitiesRecyclerAdapter
 
+    // Списки городов
     private var citiesArray: MutableList<City> = ArrayList()
     private val favouriteCitiesArray = MutableLiveData<MutableList<City>>()
     private var filteredCities: MutableList<City>? = null
-
     fun getFavouriteList(): LiveData<MutableList<City>> {
         return favouriteCitiesArray
     }
@@ -31,6 +31,7 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_citychange)
 
+        // На набор текста вешаем обновление списка городов по фильтру
         binding.cityFilter.addTextChangedListener {
             updateCityView(binding.cityFilter.text.toString())
         }
@@ -39,6 +40,7 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
         initRecycler()
     }
 
+    // Начальные списки городов
     private fun initList() {
         citiesArray.add(City("Moscow", "Russia", 37.62f, 55.75f, false))
         citiesArray.add(City("Perm", "Russia", 56.29f, 58.02f, false))
@@ -67,18 +69,17 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
         }
     }
 
+    // Устанавливаем наши адаптеры в качестве адаптеров для двух РесайклВью,
+    // попутно подавая в них обработчик событий клика
     private fun initRecycler() {
-        //устанавливаем наш адаптер в качестве адаптера для нашего RecyclerView,
-        // попутно подавая в него обработчик событий клика
         adapterFav = FavouriteCitiesRecyclerAdapter(this, favouriteCitiesArray, this)
         adapterCit = CitiesRecyclerAdapter(this, filteredCities, adapterFav, this)
         binding.listFavouriteCitiesRecView.adapter = adapterFav
         binding.listCitiesRecView.adapter = adapterCit
     }
 
-
+    // Сохраняем список предпочитаемых городов, с одним городом по умолчанию
     override fun onDestroy() {
-
         var stringsForSaving = ""
         for (favCity in favouriteCitiesArray.value!!) {
             stringsForSaving += "${favCity.city},${favCity.country},${favCity.longitude},${favCity.latitude},${favCity.isFavourite};"
@@ -87,8 +88,8 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
         super.onDestroy()
     }
 
+    // Фильтруем список городов при вводе буковок в поле ЕдитТекст
     private fun updateCityView(filter: String) {
-
         filteredCities = if (filter.isNotEmpty()) {
             citiesArray.filter { city ->
                 city.city.startsWith(
@@ -101,9 +102,10 @@ class RecyclerViewActivity : AppCompatActivity(), CellClickListener {
             filteredCities?.let { CitiesRecyclerAdapter(this, it, adapterFav, this) }
     }
 
+    // При нажатии на город, возвращаем его в главное активити
     override fun onCellClickListener(data: City) {
         val intent = Intent()
-        intent.putExtra("Location", floatArrayOf(data.latitude,data.longitude))
+        intent.putExtra("Location", floatArrayOf(data.latitude, data.longitude))
         setResult(RESULT_OK, intent)
         finish()
     }

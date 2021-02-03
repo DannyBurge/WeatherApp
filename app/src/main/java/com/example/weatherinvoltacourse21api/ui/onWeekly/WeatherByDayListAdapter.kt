@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherinvoltacourse21api.R
 
+// Создаем класс и наследуем его от класса RecyclerView.Adapter,
+// добавляем на вход обработчик событий
 class WeatherByDayListAdapter(
     context: Context,
     private val weatherByHour: MutableList<WeatherByDayForAdapter>
@@ -44,14 +46,14 @@ class WeatherByDayListAdapter(
             dayTemp.text = weatherInfoByDay.dayTemp
             nightTemp.text = weatherInfoByDay.nightTemp
             weatherMain.text = weatherInfoByDay.weatherDescription
-
-            when(weatherInfoByDay.idWeather/100) {
+            // В зависимости от кода в сообщении рисуем нужную иконку
+            when (weatherInfoByDay.idWeather / 100) {
                 2 -> icon.setImageResource(R.mipmap.storm)
                 3 -> icon.setImageResource(R.mipmap.wet)
                 5 -> icon.setImageResource(R.mipmap.rain)
                 6 -> icon.setImageResource(R.mipmap.snow)
                 7 -> icon.setImageResource(R.mipmap.dry)
-                8 -> when(weatherInfoByDay.idWeather%100) {
+                8 -> when (weatherInfoByDay.idWeather % 100) {
                     0 -> icon.setImageResource(R.mipmap.sun)
                     1 -> icon.setImageResource(R.mipmap.sun_cloud)
                     2 -> icon.setImageResource(R.mipmap.cloud)

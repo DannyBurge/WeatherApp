@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherinvoltacourse21api.R
 
+// Создаем класс и наследуем его от класса RecyclerView.Adapter,
+// добавляем на вход обработчик событий
 class WeatherByHourListAdapter(
     context: Context,
     private val weatherByHour: MutableList<WeatherByHourForAdapter>
@@ -44,6 +46,7 @@ class WeatherByHourListAdapter(
             mainTempHourlyView.text = weatherInfoByHour.mainTemp
             feelsLikeTempHourlyView.text = weatherInfoByHour.feelsLikeTemp
             hourWeatherInfoDescription.text = weatherInfoByHour.description
+            // В зависимости от кода в сообщении рисуем нужную иконку
             when(weatherInfoByHour.idWeather/100) {
                 2 -> icon.setImageResource(R.mipmap.storm)
                 3 -> icon.setImageResource(R.mipmap.wet)

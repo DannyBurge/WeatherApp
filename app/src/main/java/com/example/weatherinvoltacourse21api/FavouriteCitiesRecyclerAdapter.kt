@@ -12,8 +12,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 
-//Создаем класс FavouriteCitiesRecyclerAdapter и наследуем его от класса RecyclerView.Adapter,
-//добавляем на вход обработчик событий
+// Создаем класс и наследуем его от класса RecyclerView.Adapter,
+// добавляем на вход обработчик событий
 class FavouriteCitiesRecyclerAdapter(
     context: Context,
     private val favouriteCities: MutableLiveData<MutableList<City>>,

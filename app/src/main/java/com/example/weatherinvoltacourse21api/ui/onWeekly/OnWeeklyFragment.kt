@@ -29,6 +29,7 @@ class OnWeeklyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Берем данные из полученного запроса и вешаем слушатель на их изменение
         val liveData: LiveData<List<DayWeatherData>>? = mainActivity?.getWeeklyInfo()
         liveData?.observe(viewLifecycleOwner, {
             binding.root.visibility = View.VISIBLE
@@ -36,6 +37,8 @@ class OnWeeklyFragment : Fragment() {
         })
     }
 
+    // Превращаем данные из запроса (которые были преобразованы в объекты дата классов)
+    // в список для отображения по шаблону
     private fun setText(dayWeatherInfo: List<DayWeatherData>) {
         val weatherInfoByDay: MutableList<WeatherByDayForAdapter> = ArrayList()
         val sdfDay = java.text.SimpleDateFormat("E, dd.MM")

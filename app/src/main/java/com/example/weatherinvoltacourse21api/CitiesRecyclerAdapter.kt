@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 
-//Создаем класс CitiesRecyclerAdapter и наследуем его от класса RecyclerView.Adapter,
+//Создаем класс и наследуем его от класса RecyclerView.Adapter,
 //добавляем на вход обработчик событий
 class CitiesRecyclerAdapter(
     context: Context,

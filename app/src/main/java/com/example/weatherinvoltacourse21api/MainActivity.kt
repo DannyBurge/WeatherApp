@@ -35,19 +35,16 @@ import java.io.Serializable
 
 
 class MainActivity : AppCompatActivity() {
-    private var cityName: String? = null
-
+    // Переменки для геолокации
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
 
     lateinit var binding: ActivityMainBinding
 
+    // Перменки для запросов
     lateinit var retrofit: Retrofit
     lateinit var weatherInfoAPI: WeatherInfoAPI
-
-    lateinit var dialog: AlertDialog.Builder
-    var isDialogShowing = false
 
     private val newRequest = MutableLiveData<Boolean>()
     fun isNewRequest(): LiveData<Boolean> {
@@ -58,37 +55,47 @@ class MainActivity : AppCompatActivity() {
         newRequest.value = false
     }
 
+    // Диалог если интернет бо-бо
+    lateinit var dialog: AlertDialog.Builder
+    var isDialogShowing = false
+
+    // Данные о текущей погоде
     private var weatherCurrentInfo = MutableLiveData<CurrentWeatherData>()
     fun getCurrentInfo(): LiveData<CurrentWeatherData> {
         return weatherCurrentInfo
     }
 
+    // Данные о почасовой погоде
     private var weatherHourlyInfo = MutableLiveData<List<HourWeatherData>>()
     fun getHourlyInfo(): LiveData<List<HourWeatherData>> {
         return weatherHourlyInfo
     }
 
+    // Данные о ежедневной погоде
     private var weatherWeeklyInfo = MutableLiveData<List<DayWeatherData>>()
     fun getWeeklyInfo(): LiveData<List<DayWeatherData>> {
         return weatherWeeklyInfo
     }
 
+    // Проверяем, какой город отмечен, как город по умолчанию и проверяем погоду для него
     private fun checkIfThereIsFavouriteCity() {
         val prefs = getSharedPreferences("savedCities", Context.MODE_PRIVATE)
         val savedCities =
             prefs.getString("savedCities", "Auto,locate,${0f},${0f},true")
         if (savedCities != null) {
+            // Так как он такой только один, то идем до первого попавшегося
             for (savedCity in savedCities.split(";")) {
                 val cityInfo = savedCity.split(",")
                 if (cityInfo[4].toBoolean()) {
                     if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
-                        getLastKnownLocation()
+                        if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
                     } else requestWeather(
                         floatArrayOf(
                             cityInfo[3].toFloat(),
                             cityInfo[2].toFloat()
                         )
                     )
+                    break
                 }
             }
         }
@@ -99,8 +106,8 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateDialog(id)
     }
 
+    // Сохраняем данные о погоде для смены конфигурации
     override fun onSaveInstanceState(outState: Bundle) {
-
         outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
         outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
         outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
@@ -112,6 +119,7 @@ class MainActivity : AppCompatActivity() {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
 
+        // Создаем диалог про плохой интернет, на кнопку вешаем повтор запроса
         dialog = AlertDialog.Builder(this)
         dialog.setMessage(resources.getString(R.string.InternetIssue))
         dialog.setPositiveButton("Retry") { _, _ ->
@@ -122,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         }
         dialog.create()
 
+        // Формируем запрос и прикручиваем API
         retrofit = Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -130,7 +139,7 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-
+        // Проверяем есть ли в сейве данные (изменилась ли конфигурация)
         if (savedInstanceState != null) {
             weatherCurrentInfo.value = savedInstanceState.getParcelable("CurrentWeatherData")
             weatherHourlyInfo.value =
@@ -139,21 +148,20 @@ class MainActivity : AppCompatActivity() {
                 savedInstanceState.getSerializable("DayWeatherData") as List<DayWeatherData>
 
             savedInstanceState.clear()
-
+            // Взяли из сейва и отображаем
             binding.loadingProgressBar.hide()
             binding.viewPager.visibility = View.VISIBLE
         } else {
             binding.viewPager.visibility = View.INVISIBLE
-
-            if (!isLocationGranted()) {
-                getLocalPermissions()
-            } else checkIfThereIsFavouriteCity()
+            // В сейве пусто, чекаем список городов
+            checkIfThereIsFavouriteCity()
 
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {}
             }
         }
 
+        // Привязываем отображение фрагментов к кнопулькам внизу
         binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_onHourlyFragment -> {
@@ -172,6 +180,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Добавляем листалку свайпами
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
@@ -180,6 +189,7 @@ class MainActivity : AppCompatActivity() {
             ) {
             }
 
+            // Говорим подсвечивать нужную кнопку, если свайпом была изменена вкладка
             override fun onPageSelected(position: Int) {
                 when (position) {
                     0 -> binding.bottomNavigation.menu.findItem(R.id.navigation_onHourlyFragment).isChecked =
@@ -197,16 +207,19 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // Добавляем наши фрагменты в адаптер
         val adapter = FragmentsPagerAdapter(supportFragmentManager)
         adapter.addFragment(OnHourlyFragment())
         adapter.addFragment(OnWeatherFragment())
         adapter.addFragment(OnWeeklyFragment())
         binding.viewPager.adapter = adapter
 
+        // Дефолтная вкладка - центральная
         binding.viewPager.currentItem = 1
         binding.bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
     }
 
+    // Вернулся результат с выбора города
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         onBuckPressed = 0
@@ -214,11 +227,12 @@ class MainActivity : AppCompatActivity() {
             return
         } else {
             val location = data.getFloatArrayExtra("Location")
-            cityName = data.getStringExtra("CityName")
             if (location != null) {
+                // Был выбран "Авто"
                 if ((location[0] == 0f) and (location[1] == 0f)) {
-                    getLastKnownLocation()
+                    if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
                 } else {
+                    // Не "Авто"
                     requestWeather(location)
                 }
             } else {
@@ -230,6 +244,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Двойное нажатие на кнопку назад - выход из приложения
     private var onBuckPressed = 0
     override fun onBackPressed() {
         onBuckPressed += 1
@@ -238,6 +253,7 @@ class MainActivity : AppCompatActivity() {
         } else Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show()
     }
 
+    // Не смотрим геопозицию, если приложение свернуто или выключено
     override fun onPause() {
         super.onPause()
         locationProvider?.removeLocationUpdates(locationCallback)
@@ -248,11 +264,13 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
     }
 
+    // Получаем геопозицию из гугл сервиса
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation() {
         locationProvider?.requestLocationUpdates(locationRequest, locationCallback, null)
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
 
+        // При успехе запрашиваем погоду
         locationProvider?.lastLocation?.addOnSuccessListener { location ->
             if (location != null) {
                 requestWeather(
@@ -274,6 +292,7 @@ class MainActivity : AppCompatActivity() {
         val client = LocationServices.getSettingsClient(this)
         val task = client.checkLocationSettings(builder.build())
 
+        // Просим юзера включить геопозицию, если она выключена
         task.addOnFailureListener { e ->
             if (e is ResolvableApiException) {
                 try {
@@ -285,6 +304,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Запрос юзера на получение разрешения на доступ к геолокации
     private fun getLocalPermissions() {
         ActivityCompat.requestPermissions(
             this, arrayOf(
@@ -295,6 +315,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    // Реакция на получение или запрет на доступ к геолокации
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String?>,
@@ -303,9 +324,11 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             2 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Можно
                     Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
                     getLastKnownLocation()
                 } else {
+                    // Нельзя (давай спросим город)
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, RecyclerViewActivity::class.java)
                     startActivityForResult(intent, 1)
@@ -316,6 +339,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Проверка даны ли уже разрешения на доступ к геолокации
     private fun isLocationGranted(): Boolean {
         return ((ActivityCompat.checkSelfPermission(
             this,
@@ -328,20 +352,23 @@ class MainActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED))
     }
 
+    // Запрос погоды
     private fun requestWeather(location: FloatArray) {
         val isLoading = arrayOf(true, true)
         binding.loadingProgressBar.show()
 
         newRequest.postValue(true)
 
+        // Асинхронный запрос текущей погоды
         weatherInfoAPI.getCurrentWeatherInfo(location[0], location[1])
             ?.enqueue(object : Callback<CurrentWeatherData?> {
+                // Неуспешный запрос, показываем диалог
                 override fun onFailure(call: Call<CurrentWeatherData?>, t: Throwable) {
                     if (!isDialogShowing) dialog.show()
                     binding.loadingProgressBar.hide()
-
                 }
 
+                // Успешный запрос
                 override fun onResponse(
                     call: Call<CurrentWeatherData?>,
                     response: Response<CurrentWeatherData?>
@@ -353,13 +380,16 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+        // Асинхронный запрос ежедневной и почасовой погоды
         weatherInfoAPI.getHourlyDailyWeatherInfo(location[0], location[1])
             ?.enqueue(object : Callback<OneCallWeatherData?> {
+                // Неуспешный запрос, показываем диалог
                 override fun onFailure(call: Call<OneCallWeatherData?>, t: Throwable) {
                     if (!isDialogShowing) dialog.show()
                     binding.loadingProgressBar.hide()
                 }
 
+                // Успешный запрос
                 override fun onResponse(
                     call: Call<OneCallWeatherData?>,
                     response: Response<OneCallWeatherData?>
@@ -372,6 +402,7 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+        // Жди, когда запросы завершатся и выключай прогресбар, показывай фрагменты
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 while (true) {

@@ -48,11 +48,13 @@ class OnWeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val liveData: LiveData<CurrentWeatherData>? = mainActivity?.getCurrentInfo()
+        // Берем данные из полученного запроса и вешаем слушатель на их изменение
         liveData?.observe(viewLifecycleOwner) {
             binding.root.visibility = View.VISIBLE
             setText(it)
         }
 
+        // Берем данные из полученного запроса про новый ли запрос и вешаем слушатель на их изменение
         val isNewRequest: LiveData<Boolean>? = mainActivity?.isNewRequest()
         isNewRequest?.observe(viewLifecycleOwner) {
             doAnimation = it
@@ -83,6 +85,7 @@ class OnWeatherFragment : Fragment() {
         binding.visibilityInfo.text = "${(currentWeatherInfo.visibility / 1000).toInt()} km"
         binding.pressureInfo.text = "${currentWeatherInfo.main.pressure} mmHg"
 
+        // В зависимости от температуры используем нужные бары, а остальные прячем
         val barMain: ProgressBar
         val barFeelsLike: ProgressBar
 
@@ -100,6 +103,7 @@ class OnWeatherFragment : Fragment() {
         barMain.visibility = View.VISIBLE
         barFeelsLike.visibility = View.VISIBLE
 
+        // В зависимости от того, обновился ли запорс, рисуем анимацию
         if (doAnimation) {
             //Первая шкала "Температура"
             var animation = ObjectAnimator.ofInt(
@@ -107,8 +111,8 @@ class OnWeatherFragment : Fragment() {
                 "progress",
                 0,
                 abs(currentWeatherInfo.main.temp.toInt()) * 100,
-            ) // see this max value coming back here, we animate towards that value
-            animation.duration = 1500 // in milliseconds
+            )
+            animation.duration = 1500
             animation.interpolator = DecelerateInterpolator()
             animation.start()
 
@@ -119,7 +123,7 @@ class OnWeatherFragment : Fragment() {
                 0,
                 abs(currentWeatherInfo.main.feels_like.toInt()) * 100
             )
-            animation.duration = 2000 // in milliseconds
+            animation.duration = 2000
             animation.interpolator = DecelerateInterpolator()
             animation.start()
 
