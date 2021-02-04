@@ -417,10 +417,12 @@ class MainActivity : AppCompatActivity() {
 
     // Сохраняем данные о погоде для смены конфигурации
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
-        outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
-        outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
-        outState.putFloatArray("currentLocation", currentLocation)
+        if (weatherCurrentInfo.value != null) {
+            outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
+            outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
+            outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
+            outState.putFloatArray("currentLocation", currentLocation)
+        }
         Timber.i("onSaveInstanceState Called")
         super.onSaveInstanceState(outState)
     }
