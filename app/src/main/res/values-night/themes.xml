@@ -11,6 +11,7 @@
     <!-- Theme Colors. -->
     <color name="bottomBarMenuColor">@color/material_gray_700</color>
     <color name="cardBackground">@color/semi_clear_white</color>
+    <color name="refreshBackground">@color/material_gray_500</color>
     <color name="cardPicBackground">@color/semi_clear_white</color>
     <color name="allTextColor">@color/myGray</color>
 

@@ -18,6 +18,8 @@
     <color name="material_cian_70">#BED2F0</color>
     <color name="material_purple_300">#9575CD</color>
     <color name="material_gray_700">#0F0F0F</color>
+    <color name="material_gray_500">#232323</color>
+    <color name="material_gray_50">#DCDCDC</color>
     <color name="material_gray_70">#DCDCDC</color>
     <color name="material_gray_7">#F0F0F0</color>
 

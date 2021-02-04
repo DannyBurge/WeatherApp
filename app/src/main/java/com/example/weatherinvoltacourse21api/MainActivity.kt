@@ -8,12 +8,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -39,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
+
+    private lateinit var currentLocation: FloatArray
 
     lateinit var binding: ActivityMainBinding
 
@@ -77,44 +81,6 @@ class MainActivity : AppCompatActivity() {
         return weatherWeeklyInfo
     }
 
-    // Проверяем, какой город отмечен, как город по умолчанию и проверяем погоду для него
-    private fun checkIfThereIsFavouriteCity() {
-        val prefs = getSharedPreferences("savedCities", Context.MODE_PRIVATE)
-        val savedCities =
-            prefs.getString("savedCities", "Auto,locate,${0f},${0f},true")
-        if (savedCities != null) {
-            // Так как он такой только один, то идем до первого попавшегося
-            for (savedCity in savedCities.split(";")) {
-                val cityInfo = savedCity.split(",")
-                if (cityInfo[4].toBoolean()) {
-                    if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
-                        if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
-                    } else requestWeather(
-                        floatArrayOf(
-                            cityInfo[3].toFloat(),
-                            cityInfo[2].toFloat()
-                        )
-                    )
-                    break
-                }
-            }
-        }
-    }
-
-    override fun onCreateDialog(id: Int): Dialog {
-        isDialogShowing = true
-        return super.onCreateDialog(id)
-    }
-
-    // Сохраняем данные о погоде для смены конфигурации
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
-        outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
-        outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
-        Timber.i("onSaveInstanceState Called")
-        super.onSaveInstanceState(outState)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
@@ -146,10 +112,11 @@ class MainActivity : AppCompatActivity() {
                 savedInstanceState.getSerializable("HourWeatherData") as List<HourWeatherData>
             weatherWeeklyInfo.value =
                 savedInstanceState.getSerializable("DayWeatherData") as List<DayWeatherData>
+            currentLocation = savedInstanceState.getFloatArray("currentLocation")!!
 
             savedInstanceState.clear()
+
             // Взяли из сейва и отображаем
-            binding.loadingProgressBar.hide()
             binding.viewPager.visibility = View.VISIBLE
         } else {
             binding.viewPager.visibility = View.INVISIBLE
@@ -160,6 +127,19 @@ class MainActivity : AppCompatActivity() {
                 override fun onLocationResult(locationResult: LocationResult?) {}
             }
         }
+
+        // Свайп вниз для обновления
+        binding.swipeRefresh.setOnRefreshListener {
+            requestWeather(currentLocation)
+        }
+        // Цвета для виджета обновления
+        binding.swipeRefresh.setColorSchemeResources(
+            R.color.material_red_400,
+            R.color.material_blue_400,
+        )
+
+        binding.swipeRefresh.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(this, R.color.refreshBackground))
+
 
         // Привязываем отображение фрагментов к кнопулькам внизу
         binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
@@ -226,21 +206,8 @@ class MainActivity : AppCompatActivity() {
         if (data == null) {
             return
         } else {
-            val location = data.getFloatArrayExtra("Location")
-            if (location != null) {
-                // Был выбран "Авто"
-                if ((location[0] == 0f) and (location[1] == 0f)) {
-                    if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
-                } else {
-                    // Не "Авто"
-                    requestWeather(location)
-                }
-            } else {
-                if (resultCode == 0) {
-                    val intent = Intent(this, RecyclerViewActivity::class.java)
-                    startActivityForResult(intent, 1)
-                }
-            }
+            currentLocation = data.getFloatArrayExtra("Location")!!
+            requestWeather(currentLocation)
         }
     }
 
@@ -273,12 +240,9 @@ class MainActivity : AppCompatActivity() {
         // При успехе запрашиваем погоду
         locationProvider?.lastLocation?.addOnSuccessListener { location ->
             if (location != null) {
-                requestWeather(
-                    floatArrayOf(
-                        location.latitude.toFloat(),
-                        location.longitude.toFloat()
-                    )
-                )
+                currentLocation =
+                    floatArrayOf(location.latitude.toFloat(), location.longitude.toFloat())
+                requestWeather(currentLocation)
             }
         }
 
@@ -352,10 +316,38 @@ class MainActivity : AppCompatActivity() {
                 ) == PackageManager.PERMISSION_GRANTED))
     }
 
+    // Проверяем, какой город отмечен, как город по умолчанию и проверяем погоду для него
+    private fun checkIfThereIsFavouriteCity() {
+        val prefs = getSharedPreferences("savedCities", Context.MODE_PRIVATE)
+        val savedCities =
+            prefs.getString("savedCities", "Auto,locate,${0f},${0f},true")
+        if (savedCities != null) {
+            // Так как он такой только один, то идем до первого попавшегося
+            for (savedCity in savedCities.split(";")) {
+                val cityInfo = savedCity.split(",")
+                if (cityInfo[4].toBoolean()) {
+                    if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
+                        if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
+                    } else {
+                        currentLocation = floatArrayOf(cityInfo[3].toFloat(), cityInfo[2].toFloat())
+                        requestWeather(currentLocation)
+                    }
+                    break
+                }
+            }
+        }
+    }
+
     // Запрос погоды
     private fun requestWeather(location: FloatArray) {
+        // Если координаты нулевые, то значит, что нужно запросить геолокацию а потом вернуться обратно
+        if ((currentLocation[0] == 0f) and (currentLocation[1] == 0f)) {
+            if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
+        }
+
         val isLoading = arrayOf(true, true)
-        binding.loadingProgressBar.show()
+        binding.swipeRefresh.isRefreshing = true
+//        binding.loadingProgressBar.show()
 
         newRequest.postValue(true)
 
@@ -365,7 +357,7 @@ class MainActivity : AppCompatActivity() {
                 // Неуспешный запрос, показываем диалог
                 override fun onFailure(call: Call<CurrentWeatherData?>, t: Throwable) {
                     if (!isDialogShowing) dialog.show()
-                    binding.loadingProgressBar.hide()
+//                    binding.loadingProgressBar.hide()
                 }
 
                 // Успешный запрос
@@ -386,7 +378,7 @@ class MainActivity : AppCompatActivity() {
                 // Неуспешный запрос, показываем диалог
                 override fun onFailure(call: Call<OneCallWeatherData?>, t: Throwable) {
                     if (!isDialogShowing) dialog.show()
-                    binding.loadingProgressBar.hide()
+//                    binding.loadingProgressBar.hide()
                 }
 
                 // Успешный запрос
@@ -407,7 +399,8 @@ class MainActivity : AppCompatActivity() {
             withContext(Dispatchers.Main) {
                 while (true) {
                     if (!isLoading[0] and !isLoading[1]) {
-                        binding.loadingProgressBar.hide()
+//                        binding.loadingProgressBar.hide()
+                        binding.swipeRefresh.isRefreshing = false
                         binding.viewPager.visibility = View.VISIBLE
                         break
                     }
@@ -416,4 +409,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onCreateDialog(id: Int): Dialog {
+        isDialogShowing = true
+        return super.onCreateDialog(id)
+    }
+
+    // Сохраняем данные о погоде для смены конфигурации
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
+        outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
+        outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
+        outState.putFloatArray("currentLocation", currentLocation)
+        Timber.i("onSaveInstanceState Called")
+        super.onSaveInstanceState(outState)
+    }
+
+
 }
