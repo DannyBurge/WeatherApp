@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
@@ -138,7 +137,12 @@ class MainActivity : AppCompatActivity() {
             R.color.material_blue_400,
         )
 
-        binding.swipeRefresh.setProgressBackgroundColorSchemeColor(ContextCompat.getColor(this, R.color.refreshBackground))
+        binding.swipeRefresh.setProgressBackgroundColorSchemeColor(
+            ContextCompat.getColor(
+                this,
+                R.color.refreshBackground
+            )
+        )
 
 
         // Привязываем отображение фрагментов к кнопулькам внизу
@@ -207,7 +211,10 @@ class MainActivity : AppCompatActivity() {
             return
         } else {
             currentLocation = data.getFloatArrayExtra("Location")!!
-            requestWeather(currentLocation)
+            // Если координаты нулевые, то значит, что нужно запросить геолокацию
+            if ((currentLocation[0] == 0f) and (currentLocation[1] == 0f)) {
+                if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocationAndRequestWeather()
+            } else requestWeather(currentLocation)
         }
     }
 
@@ -233,7 +240,7 @@ class MainActivity : AppCompatActivity() {
 
     // Получаем геопозицию из гугл сервиса
     @SuppressLint("MissingPermission")
-    fun getLastKnownLocation() {
+    fun getLastKnownLocationAndRequestWeather() {
         locationProvider?.requestLocationUpdates(locationRequest, locationCallback, null)
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
 
@@ -290,7 +297,8 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Можно
                     Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
-                    getLastKnownLocation()
+                    getLastKnownLocationAndRequestWeather()
+                    requestWeather(currentLocation)
                 } else {
                     // Нельзя (давай спросим город)
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -326,12 +334,13 @@ class MainActivity : AppCompatActivity() {
             for (savedCity in savedCities.split(";")) {
                 val cityInfo = savedCity.split(",")
                 if (cityInfo[4].toBoolean()) {
-                    if ("lat=${cityInfo[3]}&lon=${cityInfo[2]}" == "lat=0.0&lon=0.0") {
-                        if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
+                    if ("${cityInfo[3]} ${cityInfo[2]}" == "0.0 0.0") {
+                        if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocationAndRequestWeather()
                     } else {
                         currentLocation = floatArrayOf(cityInfo[3].toFloat(), cityInfo[2].toFloat())
                         requestWeather(currentLocation)
                     }
+
                     break
                 }
             }
@@ -340,14 +349,8 @@ class MainActivity : AppCompatActivity() {
 
     // Запрос погоды
     private fun requestWeather(location: FloatArray) {
-        // Если координаты нулевые, то значит, что нужно запросить геолокацию а потом вернуться обратно
-        if ((currentLocation[0] == 0f) and (currentLocation[1] == 0f)) {
-            if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocation()
-        }
-
         val isLoading = arrayOf(true, true)
         binding.swipeRefresh.isRefreshing = true
-//        binding.loadingProgressBar.show()
 
         newRequest.postValue(true)
 
@@ -357,7 +360,6 @@ class MainActivity : AppCompatActivity() {
                 // Неуспешный запрос, показываем диалог
                 override fun onFailure(call: Call<CurrentWeatherData?>, t: Throwable) {
                     if (!isDialogShowing) dialog.show()
-//                    binding.loadingProgressBar.hide()
                 }
 
                 // Успешный запрос
@@ -378,7 +380,6 @@ class MainActivity : AppCompatActivity() {
                 // Неуспешный запрос, показываем диалог
                 override fun onFailure(call: Call<OneCallWeatherData?>, t: Throwable) {
                     if (!isDialogShowing) dialog.show()
-//                    binding.loadingProgressBar.hide()
                 }
 
                 // Успешный запрос
