@@ -91,15 +91,21 @@ class OnWeatherFragment : Fragment() {
 
         if (currentWeatherInfo.main.temp < 0) {
             barMain = binding.barOutBlue
-            barFeelsLike = binding.barInBlue
             binding.barOutRed.visibility = View.INVISIBLE
-            binding.barInRed.visibility = View.INVISIBLE
+
         } else {
             barMain = binding.barOutRed
-            barFeelsLike = binding.barInRed
             binding.barOutBlue.visibility = View.INVISIBLE
+        }
+
+        if (currentWeatherInfo.main.feels_like < 0) {
+            barFeelsLike = binding.barInBlue
+            binding.barInRed.visibility = View.INVISIBLE
+        } else {
+            barFeelsLike = binding.barInRed
             binding.barInBlue.visibility = View.INVISIBLE
         }
+
         barMain.visibility = View.VISIBLE
         barFeelsLike.visibility = View.VISIBLE
 
