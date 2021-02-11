@@ -25,7 +25,6 @@ class OnWeatherFragment : Fragment() {
 
     var mainActivity: MainActivity? = null
     private lateinit var binding: FragmentWeatherBinding
-    private var doAnimation: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,18 +52,8 @@ class OnWeatherFragment : Fragment() {
             binding.root.visibility = View.VISIBLE
             setText(it)
         }
-
-        // Берем данные из полученного запроса про новый ли запрос и вешаем слушатель на их изменение
-        val isNewRequest: LiveData<Boolean>? = mainActivity?.isNewRequest()
-        isNewRequest?.observe(viewLifecycleOwner) {
-            doAnimation = it
-        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        doAnimation = false
-    }
 
     @SuppressLint("SetTextI18n")
     fun setText(currentWeatherInfo: CurrentWeatherData) {
@@ -109,8 +98,8 @@ class OnWeatherFragment : Fragment() {
         barMain.visibility = View.VISIBLE
         barFeelsLike.visibility = View.VISIBLE
 
-        // В зависимости от того, обновился ли запорс, рисуем анимацию
-        if (doAnimation) {
+        // В зависимости от того, обновился ли запрос, рисуем анимацию
+        if (mainActivity?.binding?.viewPager?.currentItem == 1) {
             //Первая шкала "Температура"
             var animation = ObjectAnimator.ofInt(
                 barMain,
@@ -133,7 +122,7 @@ class OnWeatherFragment : Fragment() {
             animation.interpolator = DecelerateInterpolator()
             animation.start()
 
-            mainActivity?.noNewRequest()
+//            mainActivity?.noNewRequest()
         } else {
             barMain.progress = abs(currentWeatherInfo.main.temp.toInt()) * 100
             barFeelsLike.progress = abs(currentWeatherInfo.main.feels_like.toInt()) * 100

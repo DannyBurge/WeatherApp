@@ -10,6 +10,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -45,18 +46,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
 
-    // Перменки для запросов
+    // Переменки для запросов
     lateinit var retrofit: Retrofit
     lateinit var weatherInfoAPI: WeatherInfoAPI
-
-    private val newRequest = MutableLiveData<Boolean>()
-    fun isNewRequest(): LiveData<Boolean> {
-        return newRequest
-    }
-
-    fun noNewRequest() {
-        newRequest.value = false
-    }
 
     // Диалог если интернет бо-бо
     lateinit var dialog: AlertDialog.Builder
@@ -80,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         return weatherWeeklyInfo
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
@@ -144,6 +137,19 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
+        // Внимательнее отслеживаем жесты для обновления, чтобы не путать их с листанием вкладок
+        binding.viewPager.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    binding.swipeRefresh.isEnabled = false
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    binding.swipeRefresh.isEnabled = true
+                }
+            }
+            false
+        }
+
 
         // Привязываем отображение фрагментов к кнопулькам внизу
         binding.bottomNavigation.setOnNavigationItemSelectedListener { item ->
@@ -187,8 +193,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onPageScrollStateChanged(state: Int) {
-            }
+            override fun onPageScrollStateChanged(state: Int) {}
         })
 
         // Добавляем наши фрагменты в адаптер
@@ -203,8 +208,13 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
     }
 
+
     // Вернулся результат с выбора города
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
         super.onActivityResult(requestCode, resultCode, data)
         onBuckPressed = 0
         if (data == null) {
@@ -219,12 +229,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Двойное нажатие на кнопку назад - выход из приложения
-    private var onBuckPressed = 0
+    private
+    var onBuckPressed = 0
     override fun onBackPressed() {
         onBuckPressed += 1
         if (onBuckPressed > 1) {
             super.onBackPressed()
-        } else Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG).show()
+        } else Toast.makeText(this, "Press back again to exit", Toast.LENGTH_LONG)
+            .show()
     }
 
     // Не смотрим геопозицию, если приложение свернуто или выключено
@@ -258,7 +270,8 @@ class MainActivity : AppCompatActivity() {
         locationRequest?.fastestInterval = 5000
         locationRequest?.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
+        val builder =
+            LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
 
         val client = LocationServices.getSettingsClient(this)
         val task = client.checkLocationSettings(builder.build())
@@ -337,7 +350,8 @@ class MainActivity : AppCompatActivity() {
                     if ("${cityInfo[3]} ${cityInfo[2]}" == "0.0 0.0") {
                         if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocationAndRequestWeather()
                     } else {
-                        currentLocation = floatArrayOf(cityInfo[3].toFloat(), cityInfo[2].toFloat())
+                        currentLocation =
+                            floatArrayOf(cityInfo[3].toFloat(), cityInfo[2].toFloat())
                         requestWeather(currentLocation)
                     }
 
@@ -351,8 +365,6 @@ class MainActivity : AppCompatActivity() {
     private fun requestWeather(location: FloatArray) {
         val isLoading = arrayOf(true, true)
         binding.swipeRefresh.isRefreshing = true
-
-        newRequest.postValue(true)
 
         // Асинхронный запрос текущей погоды
         weatherInfoAPI.getCurrentWeatherInfo(location[0], location[1])
@@ -419,9 +431,18 @@ class MainActivity : AppCompatActivity() {
     // Сохраняем данные о погоде для смены конфигурации
     override fun onSaveInstanceState(outState: Bundle) {
         if (weatherCurrentInfo.value != null) {
-            outState.putParcelable("CurrentWeatherData", weatherCurrentInfo.value as Parcelable)
-            outState.putSerializable("HourWeatherData", weatherHourlyInfo.value as Serializable)
-            outState.putSerializable("DayWeatherData", weatherWeeklyInfo.value as Serializable)
+            outState.putParcelable(
+                "CurrentWeatherData",
+                weatherCurrentInfo.value as Parcelable
+            )
+            outState.putSerializable(
+                "HourWeatherData",
+                weatherHourlyInfo.value as Serializable
+            )
+            outState.putSerializable(
+                "DayWeatherData",
+                weatherWeeklyInfo.value as Serializable
+            )
             outState.putFloatArray("currentLocation", currentLocation)
         }
         Timber.i("onSaveInstanceState Called")
