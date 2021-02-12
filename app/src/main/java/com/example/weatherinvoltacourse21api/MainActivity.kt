@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     private var locationProvider: FusedLocationProviderClient? = null
     private var locationRequest: LocationRequest? = null
     private var locationCallback: LocationCallback? = null
+    var isNewRequest: Boolean = false
 
     private lateinit var currentLocation: FloatArray
 
@@ -61,14 +62,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Данные о почасовой погоде
-    private var weatherHourlyInfo = MutableLiveData<List<HourWeatherData>>()
-    fun getHourlyInfo(): LiveData<List<HourWeatherData>> {
+    private var weatherHourlyInfo = MutableLiveData<MutableList<HourWeatherData>>()
+    fun getHourlyInfo(): LiveData<MutableList<HourWeatherData>> {
         return weatherHourlyInfo
     }
 
     // Данные о ежедневной погоде
-    private var weatherWeeklyInfo = MutableLiveData<List<DayWeatherData>>()
-    fun getWeeklyInfo(): LiveData<List<DayWeatherData>> {
+    private var weatherWeeklyInfo = MutableLiveData<MutableList<DayWeatherData>>()
+    fun getWeeklyInfo(): LiveData<MutableList<DayWeatherData>> {
         return weatherWeeklyInfo
     }
 
@@ -99,14 +100,22 @@ class MainActivity : AppCompatActivity() {
 
         // Проверяем есть ли в сейве данные (изменилась ли конфигурация)
         if (savedInstanceState != null) {
+            isNewRequest = false
             weatherCurrentInfo.value = savedInstanceState.getParcelable("CurrentWeatherData")
-            weatherHourlyInfo.value =
-                savedInstanceState.getSerializable("HourWeatherData") as List<HourWeatherData>
-            weatherWeeklyInfo.value =
-                savedInstanceState.getSerializable("DayWeatherData") as List<DayWeatherData>
-            currentLocation = savedInstanceState.getFloatArray("currentLocation")!!
+            if (weatherHourlyInfo.value == null) {
+                weatherHourlyInfo.value =
+                    mutableListOf()
+            } else weatherHourlyInfo.value!!.clear()
+            weatherHourlyInfo.value?.addAll(savedInstanceState.getSerializable("HourWeatherData") as MutableList<HourWeatherData>)
 
-            savedInstanceState.clear()
+            weatherWeeklyInfo.value = savedInstanceState.getParcelable("DayWeatherData")
+            if (weatherWeeklyInfo.value == null) {
+                weatherWeeklyInfo.value =
+                    mutableListOf()
+            } else weatherWeeklyInfo.value!!.clear()
+            weatherWeeklyInfo.value?.addAll(savedInstanceState.getSerializable("DayWeatherData") as MutableList<DayWeatherData>)
+
+            currentLocation = savedInstanceState.getFloatArray("currentLocation")!!
 
             // Взяли из сейва и отображаем
             binding.viewPager.visibility = View.VISIBLE
@@ -203,11 +212,10 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(OnWeeklyFragment())
         binding.viewPager.adapter = adapter
 
-        // Дефолтная вкладка - центральная
-        binding.viewPager.currentItem = 1
+        // Дефолтная вкладка - центральная (если не была выбрана другая )
+        binding.viewPager.currentItem = savedInstanceState?.getInt("currentTab") ?: 1
         binding.bottomNavigation.menu.findItem(R.id.navigation_onWeatherFragment).isChecked = true
     }
-
 
     // Вернулся результат с выбора города
     override fun onActivityResult(
@@ -380,6 +388,7 @@ class MainActivity : AppCompatActivity() {
                     response: Response<CurrentWeatherData?>
                 ) {
                     if (response.code() == 200) {
+                        isNewRequest = true
                         weatherCurrentInfo.postValue(response.body()!!)
                         isLoading[0] = false
                     } else dialog.show()
@@ -445,6 +454,9 @@ class MainActivity : AppCompatActivity() {
             )
             outState.putFloatArray("currentLocation", currentLocation)
         }
+
+        outState.putInt("currentTab", binding.viewPager.currentItem)
+        outState.putBoolean("isNewRequest", isNewRequest)
         Timber.i("onSaveInstanceState Called")
         super.onSaveInstanceState(outState)
     }

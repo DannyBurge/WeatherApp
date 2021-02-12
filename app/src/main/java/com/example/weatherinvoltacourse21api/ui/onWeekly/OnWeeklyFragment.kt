@@ -8,7 +8,6 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
 import com.example.weatherinvoltacourse21api.DayWeatherData
 import com.example.weatherinvoltacourse21api.MainActivity
@@ -41,22 +40,20 @@ class OnWeeklyFragment : Fragment() {
     }
 
     override fun onResume() {
+        // Не отображаем анимацию, если в момент обновления мы находились на другой вкладке
         controller.animation.duration = 0
         super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        controller.animation.duration = 0
-
         // Берем данные из полученного запроса и вешаем слушатель на их изменение
-        val liveData: LiveData<List<DayWeatherData>>? = mainActivity?.getWeeklyInfo()
-        liveData?.observe(viewLifecycleOwner, {
+        mainActivity?.getWeeklyInfo()?.observe(viewLifecycleOwner, {
             binding.root.visibility = View.VISIBLE
             // Отображаем анимацию, если в момент обновления мы находимся на текущей вкладке
-            if (mainActivity?.binding?.viewPager?.currentItem == 2) {
-                controller.animation.duration = 200
-            } else controller.animation.duration = 0
+            controller.animation.duration =
+                if (mainActivity?.binding?.viewPager?.currentItem == 2) 200
+                else 0
             setText(it)
         })
     }
@@ -65,7 +62,7 @@ class OnWeeklyFragment : Fragment() {
     // в список для отображения по шаблону
     private fun setText(dayWeatherInfo: List<DayWeatherData>) {
         binding.dailyWeatherList.scheduleLayoutAnimation()
-        val weatherInfoByDay: MutableList<WeatherByDayForAdapter> = ArrayList()
+        val weatherInfoByDay: MutableList<WeatherByDayForAdapter> = mutableListOf()
         val sdfDay = java.text.SimpleDateFormat("E, dd.MM")
         for (dayWeather in dayWeatherInfo) {
             weatherInfoByDay.add(

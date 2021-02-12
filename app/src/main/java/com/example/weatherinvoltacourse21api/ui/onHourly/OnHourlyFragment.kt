@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
 import com.example.weatherinvoltacourse21api.HourWeatherData
 import com.example.weatherinvoltacourse21api.MainActivity
@@ -17,7 +15,6 @@ import com.example.weatherinvoltacourse21api.R
 import com.example.weatherinvoltacourse21api.databinding.FragmentHourlyBinding
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
 class OnHourlyFragment : Fragment() {
     var mainActivity: MainActivity? = null
@@ -38,6 +35,7 @@ class OnHourlyFragment : Fragment() {
     }
 
     override fun onResume() {
+        // Не отображаем анимацию, если в момент обновления мы находились на другой вкладке
         controller.animation.duration = 0
         super.onResume()
     }
@@ -47,13 +45,12 @@ class OnHourlyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("ViewCreated")
         // Берем данные из полученного запроса и вешаем слушатель на их изменение
-        val liveData: LiveData<List<HourWeatherData>>? = mainActivity?.getHourlyInfo()
-        liveData?.observe(viewLifecycleOwner, {
+        mainActivity?.getHourlyInfo()?.observe(viewLifecycleOwner, {
             binding.root.visibility = View.VISIBLE
             // Отображаем анимацию, если в момент обновления мы находимся на текущей вкладке
-            if(mainActivity?.binding?.viewPager?.currentItem == 0) {
-                controller.animation.duration = 200
-            } else controller.animation.duration = 0
+            controller.animation.duration =
+                if (mainActivity?.binding?.viewPager?.currentItem == 0) 200
+                else 0
             setText(it)
         })
     }
@@ -62,7 +59,7 @@ class OnHourlyFragment : Fragment() {
     // в список для отображения по шаблону
     private fun setText(hourlyWeatherInfo: List<HourWeatherData>) {
         binding.hourlyWeatherList.scheduleLayoutAnimation()
-        val weatherInfoByHour: MutableList<WeatherByHourForAdapter> = ArrayList()
+        val weatherInfoByHour: MutableList<WeatherByHourForAdapter> = mutableListOf()
 
         val sdf = java.text.SimpleDateFormat("HH:mm")
         for (hourWeather in hourlyWeatherInfo) {

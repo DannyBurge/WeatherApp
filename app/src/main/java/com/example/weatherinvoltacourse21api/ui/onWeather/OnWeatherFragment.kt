@@ -23,8 +23,10 @@ import kotlin.math.abs
 
 class OnWeatherFragment : Fragment() {
 
-    var mainActivity: MainActivity? = null
+    private var mainActivity: MainActivity? = null
     private lateinit var binding: FragmentWeatherBinding
+    private var durationFirst: Long = 0
+    private var durationSecond: Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,12 +37,10 @@ class OnWeatherFragment : Fragment() {
         mainActivity = activity as MainActivity?
         binding.root.visibility = View.INVISIBLE
 
-
         binding.buttonLocationCity.setOnClickListener {
             val intent = Intent(mainActivity, RecyclerViewActivity::class.java)
             startActivityForResult(intent, 1)
         }
-
         return binding.root
     }
 
@@ -50,30 +50,28 @@ class OnWeatherFragment : Fragment() {
         // Берем данные из полученного запроса и вешаем слушатель на их изменение
         liveData?.observe(viewLifecycleOwner) {
             binding.root.visibility = View.VISIBLE
+            // Отображаем анимацию, если в момент обновления мы находимся на текущей вкладке
+            if (mainActivity?.binding?.viewPager?.currentItem == 1) {
+                if (mainActivity?.isNewRequest == true) {
+                    durationFirst = 1500
+                    durationSecond = 2000
+                } else {
+                    durationFirst = 0
+                    durationSecond = 0
+                }
+            }
             setText(it)
         }
     }
 
+    override fun onPause() {
+        durationFirst = 0
+        durationSecond = 0
+        super.onPause()
+    }
 
     @SuppressLint("SetTextI18n")
     fun setText(currentWeatherInfo: CurrentWeatherData) {
-        val sdf = java.text.SimpleDateFormat("HH:mm")
-
-        binding.cityName.text = currentWeatherInfo.name
-
-        binding.tempMain.text = "${currentWeatherInfo.main.temp.toInt()}°C"
-        binding.tempMax.text = "${currentWeatherInfo.main.temp_max.toInt()}°C"
-        binding.tempMin.text = "${currentWeatherInfo.main.temp_min.toInt()}°C"
-        binding.tempFeelsLike.text = "Feels Like: ${currentWeatherInfo.main.feels_like.toInt()}°C"
-
-        binding.mainWeather.text = currentWeatherInfo.weather[0].description
-        binding.sunRise.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunrise * 1000))
-        binding.sunSet.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunset * 1000))
-        binding.windInfo.text = "${currentWeatherInfo.wind.speed} m/s"
-        binding.humidityInfo.text = "${currentWeatherInfo.main.humidity} %"
-        binding.visibilityInfo.text = "${(currentWeatherInfo.visibility / 1000).toInt()} km"
-        binding.pressureInfo.text = "${currentWeatherInfo.main.pressure} mmHg"
-
         // В зависимости от температуры используем нужные бары, а остальные прячем
         val barMain: ProgressBar
         val barFeelsLike: ProgressBar
@@ -98,34 +96,44 @@ class OnWeatherFragment : Fragment() {
         barMain.visibility = View.VISIBLE
         barFeelsLike.visibility = View.VISIBLE
 
-        // В зависимости от того, обновился ли запрос, рисуем анимацию
-        if (mainActivity?.binding?.viewPager?.currentItem == 1) {
-            //Первая шкала "Температура"
-            var animation = ObjectAnimator.ofInt(
-                barMain,
-                "progress",
-                0,
-                abs(currentWeatherInfo.main.temp.toInt()) * 100,
-            )
-            animation.duration = 1500
-            animation.interpolator = DecelerateInterpolator()
-            animation.start()
+        //Первая шкала "Температура"
+        var animation = ObjectAnimator.ofInt(
+            barMain,
+            "progress",
+            0,
+            abs(currentWeatherInfo.main.temp.toInt()) * 100,
+        )
+        animation.duration = durationFirst //1500 или 0
+        animation.interpolator = DecelerateInterpolator()
+        animation.start()
 
-            //Вторая шкала "Температура по ощущениям"
-            animation = ObjectAnimator.ofInt(
-                barFeelsLike,
-                "progress",
-                0,
-                abs(currentWeatherInfo.main.feels_like.toInt()) * 100
-            )
-            animation.duration = 2000
-            animation.interpolator = DecelerateInterpolator()
-            animation.start()
+        //Вторая шкала "Температура по ощущениям"
+        animation = ObjectAnimator.ofInt(
+            barFeelsLike,
+            "progress",
+            0,
+            abs(currentWeatherInfo.main.feels_like.toInt()) * 100
+        )
+        animation.duration = durationSecond //2000 или 0
+        animation.interpolator = DecelerateInterpolator()
+        animation.start()
 
-//            mainActivity?.noNewRequest()
-        } else {
-            barMain.progress = abs(currentWeatherInfo.main.temp.toInt()) * 100
-            barFeelsLike.progress = abs(currentWeatherInfo.main.feels_like.toInt()) * 100
-        }
+        val sdf = java.text.SimpleDateFormat("HH:mm")
+
+        binding.cityName.text = currentWeatherInfo.name
+
+        binding.tempMain.text = "${currentWeatherInfo.main.temp.toInt()}°C"
+        binding.tempMax.text = "${currentWeatherInfo.main.temp_max.toInt()}°C"
+        binding.tempMin.text = "${currentWeatherInfo.main.temp_min.toInt()}°C"
+        binding.tempFeelsLike.text =
+            "Feels Like: ${currentWeatherInfo.main.feels_like.toInt()}°C"
+
+        binding.mainWeather.text = currentWeatherInfo.weather[0].description
+        binding.sunRise.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunrise * 1000))
+        binding.sunSet.text = sdf.format(java.util.Date(currentWeatherInfo.sys.sunset * 1000))
+        binding.windInfo.text = "${currentWeatherInfo.wind.speed} m/s"
+        binding.humidityInfo.text = "${currentWeatherInfo.main.humidity} %"
+        binding.visibilityInfo.text = "${(currentWeatherInfo.visibility / 1000).toInt()} km"
+        binding.pressureInfo.text = "${currentWeatherInfo.main.pressure} mmHg"
     }
 }

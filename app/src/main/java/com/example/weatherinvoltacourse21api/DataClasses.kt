@@ -23,8 +23,8 @@ data class CurrentWeatherData(
 ) : Parcelable
 
 data class OneCallWeatherData(
-    val hourly: List<HourWeatherData>,
-    val daily: List<DayWeatherData>
+    val hourly: MutableList<HourWeatherData>,
+    val daily: MutableList<DayWeatherData>
 )
 
 @Parcelize
