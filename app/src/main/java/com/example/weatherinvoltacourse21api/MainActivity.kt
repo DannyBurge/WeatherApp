@@ -228,10 +228,14 @@ class MainActivity : AppCompatActivity() {
         if (data == null) {
             return
         } else {
-            currentLocation = data.getFloatArrayExtra("Location")!!
+                currentLocation = data.getFloatArrayExtra("Location") ?: floatArrayOf(0f, 0f)
             // Если координаты нулевые, то значит, что нужно запросить геолокацию
             if ((currentLocation[0] == 0f) and (currentLocation[1] == 0f)) {
-                if (!isLocationGranted()) getLocalPermissions() else getLastKnownLocationAndRequestWeather()
+                if (!isLocationGranted()) {
+                    getLocalPermissions()
+                } else {
+                    getLastKnownLocationAndRequestWeather()
+                }
             } else requestWeather(currentLocation)
         }
     }
@@ -261,6 +265,20 @@ class MainActivity : AppCompatActivity() {
     // Получаем геопозицию из гугл сервиса
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationAndRequestWeather() {
+        // Просим юзера включить геопозицию, если она выключена
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
+        val client = LocationServices.getSettingsClient(this)
+        val task = client.checkLocationSettings(builder.build())
+        task.addOnFailureListener { e ->
+            if (e is ResolvableApiException) {
+                try {
+                    e.startResolutionForResult(this, 500)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    sendEx.printStackTrace()
+                }
+            }
+        }
+
         locationProvider?.requestLocationUpdates(locationRequest, locationCallback, null)
         locationProvider = LocationServices.getFusedLocationProviderClient(this)
 
@@ -278,22 +296,9 @@ class MainActivity : AppCompatActivity() {
         locationRequest?.fastestInterval = 5000
         locationRequest?.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        val builder =
-            LocationSettingsRequest.Builder().addLocationRequest(locationRequest!!)
 
-        val client = LocationServices.getSettingsClient(this)
-        val task = client.checkLocationSettings(builder.build())
 
-        // Просим юзера включить геопозицию, если она выключена
-        task.addOnFailureListener { e ->
-            if (e is ResolvableApiException) {
-                try {
-                    e.startResolutionForResult(this, 500)
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    sendEx.printStackTrace()
-                }
-            }
-        }
+
     }
 
     // Запрос юзера на получение разрешения на доступ к геолокации
@@ -319,7 +324,6 @@ class MainActivity : AppCompatActivity() {
                     // Можно
                     Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
                     getLastKnownLocationAndRequestWeather()
-                    requestWeather(currentLocation)
                 } else {
                     // Нельзя (давай спросим город)
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
